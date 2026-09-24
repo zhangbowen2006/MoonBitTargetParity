@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "name": "synthetic-integer-boundary-example",
+  "expected_targets": ["wasm", "js"],
+  "observations": [
+    {
+      "target": "wasm",
+      "exit_code": 0,
+      "stdout": "2147483647",
+      "stderr": ""
+    },
+    {
+      "target": "js",
+      "exit_code": 1,
+      "stdout": "-2147483648",
+      "stderr": "overflow"
+    }
+  ],
+  "policy": {
+    "normalize_line_endings": true,
+    "trim_one_final_newline": false,
+    "compare_stderr": true,
+    "compare_stdout_as_json": false
+  }
+}

@@ -1,0 +1,93 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "zhangbowen2006/moonbit-target-parity"
+
+import {
+  "moonbitlang/core/json",
+}
+
+// Values
+pub fn compare_scenario(ScenarioRun) -> ParityReport
+
+pub fn compare_suite(Array[ScenarioRun]) -> SuiteReport
+
+pub fn report_exit_code(ParityReport) -> Int
+
+pub fn report_to_json(ParityReport) -> String
+
+pub fn report_to_markdown(ParityReport) -> String
+
+pub fn suite_report_exit_code(SuiteReport) -> Int
+
+pub fn suite_report_to_json(SuiteReport) -> String
+
+// Errors
+
+// Types and methods
+pub(all) struct ComparePolicy {
+  normalize_line_endings : Bool
+  trim_one_final_newline : Bool
+  compare_stderr : Bool
+  compare_stdout_as_json : Bool
+} derive(ToJson, @json.FromJson)
+pub fn ComparePolicy::from_json(Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn ComparePolicy::strict() -> Self
+pub fn ComparePolicy::to_json(Self) -> Json
+
+pub(all) struct FieldDifference {
+  target : String
+  field : String
+  path : String?
+  reference : String
+  observed : String
+} derive(ToJson)
+pub fn FieldDifference::to_json(Self) -> Json
+
+pub(all) struct Observation {
+  target : String
+  exit_code : Int
+  stdout : String
+  stderr : String
+} derive(ToJson, @json.FromJson)
+pub fn Observation::from_json(Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn Observation::to_json(Self) -> Json
+
+pub(all) struct ParityReport {
+  scenario : String
+  status : Status
+  diagnostics : Array[String]
+  reference_target : String?
+  compared_targets : Array[String]
+  missing_targets : Array[String]
+  unexpected_targets : Array[String]
+  duplicate_targets : Array[String]
+  differences : Array[FieldDifference]
+}
+
+pub(all) struct ScenarioRun {
+  schema_version : Int
+  name : String
+  expected_targets : Array[String]
+  observations : Array[Observation]
+  policy : ComparePolicy
+} derive(ToJson, @json.FromJson)
+pub fn ScenarioRun::from_json(Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn ScenarioRun::to_json(Self) -> Json
+
+pub enum Status {
+  Pass
+  Divergent
+  Inconclusive
+}
+
+pub(all) struct SuiteReport {
+  status : Status
+  scenario_count : Int
+  passed : Int
+  divergent : Int
+  inconclusive : Int
+  reports : Array[ParityReport]
+}
+
+// Type aliases
+
+// Traits

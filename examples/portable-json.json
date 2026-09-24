@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "package_path": "cmd/probe",
+  "targets": ["wasm", "wasm-gc", "js", "native"],
+  "timeout_ms": 30000,
+  "scenarios": [
+    {
+      "name": "integer-wrap-and-unicode-json",
+      "args": [],
+      "stdin": "",
+      "policy": {
+        "normalize_line_endings": true,
+        "trim_one_final_newline": false,
+        "compare_stderr": false,
+        "compare_stdout_as_json": true
+      }
+    }
+  ]
+}
