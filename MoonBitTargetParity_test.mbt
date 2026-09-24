@@ -89,6 +89,8 @@ test "one trailing newline policy does not trim more" {
     trim_one_final_newline: true,
     compare_stderr: true,
     compare_stdout_as_json: false,
+    strip_ansi_sgr: false,
+    trim_trailing_whitespace_per_line: false,
   }
   let equal = @moonbit-target-parity.compare_scenario({
     schema_version: 1,
@@ -121,6 +123,8 @@ test "diagnostic mode can omit stderr but never stdout or exit code" {
     trim_one_final_newline: false,
     compare_stderr: false,
     compare_stdout_as_json: false,
+    strip_ansi_sgr: false,
+    trim_trailing_whitespace_per_line: false,
   }
   let report = @moonbit-target-parity.compare_scenario({
     schema_version: 1,
@@ -147,6 +151,8 @@ test "JSON stdout comparison ignores object member order but preserves array ord
     trim_one_final_newline: false,
     compare_stderr: true,
     compare_stdout_as_json: true,
+    strip_ansi_sgr: false,
+    trim_trailing_whitespace_per_line: false,
   }
   let object_order = @moonbit-target-parity.compare_scenario({
     schema_version: 1,
@@ -180,6 +186,8 @@ test "JSON differences identify escaped nested pointer paths" {
     trim_one_final_newline: false,
     compare_stderr: true,
     compare_stdout_as_json: true,
+    strip_ansi_sgr: false,
+    trim_trailing_whitespace_per_line: false,
   }
   let report = @moonbit-target-parity.compare_scenario({
     schema_version: 1,
@@ -272,6 +280,120 @@ test "suite divergence takes precedence over missing target evidence" {
 }
 
 ///|
+test "unified text diff preserves context and marks removed and added lines" {
+  let diff = @moonbit-target-parity.unified_text_diff(
+    "first\nold value\nlast\n", "first\nnew value\nlast\n",
+  )
+  assert_true(diff.contains(" first\n"))
+  assert_true(diff.contains("-old value\n"))
+  assert_true(diff.contains("+new value\n"))
+  assert_true(diff.contains(" last\n"))
+}
+
+///|
+test "unified text diff handles empty and unchanged files" {
+  let added = @moonbit-target-parity.unified_text_diff("", "one\ntwo")
+  assert_true(added.contains("+one\n"))
+  assert_true(added.contains("+two\n"))
+  let unchanged = @moonbit-target-parity.unified_text_diff("same\n", "same\n")
+  assert_true(unchanged.contains(" same\n"))
+  assert_true(!unchanged.contains("+same"))
+  assert_true(!unchanged.contains("-same"))
+}
+
+///|
+test "ANSI SGR and trailing whitespace normalization are opt-in" {
+  let policy : @moonbit-target-parity.ComparePolicy = {
+    normalize_line_endings: true,
+    trim_one_final_newline: false,
+    compare_stderr: true,
+    compare_stdout_as_json: false,
+    strip_ansi_sgr: true,
+    trim_trailing_whitespace_per_line: true,
+  }
+  let normalized = @moonbit-target-parity.compare_scenario({
+    schema_version: 1,
+    name: "terminal-formatting",
+    expected_targets: ["native", "js"],
+    observations: [
+      {
+        target: "native",
+        exit_code: 0,
+        stdout: "\u{1b}[31mred\u{1b}[0m  \nplain\t",
+        stderr: "",
+      },
+      { target: "js", exit_code: 0, stdout: "red\nplain", stderr: "", },
+    ],
+    policy,
+  })
+  assert_true(normalized.status is @moonbit-target-parity.Status::Pass)
+
+  let strict_policy : @moonbit-target-parity.ComparePolicy = {
+    normalize_line_endings: true,
+    trim_one_final_newline: false,
+    compare_stderr: true,
+    compare_stdout_as_json: false,
+    strip_ansi_sgr: false,
+    trim_trailing_whitespace_per_line: false,
+  }
+  let strict = @moonbit-target-parity.compare_scenario({
+    schema_version: 1,
+    name: "terminal-formatting-strict",
+    expected_targets: ["native", "js"],
+    observations: [
+      {
+        target: "native",
+        exit_code: 0,
+        stdout: "\u{1b}[31mred\u{1b}[0m  \nplain\t",
+        stderr: "",
+      },
+      { target: "js", exit_code: 0, stdout: "red\nplain", stderr: "", },
+    ],
+    policy: strict_policy,
+  })
+  assert_true(strict.status is @moonbit-target-parity.Status::Divergent)
+}
+
+///|
+test "large unified diffs stop before allocating an unbounded matrix" {
+  let mut expected = ""
+  let mut observed = ""
+  let mut i = 0
+  while i < 1001 {
+    expected += "old\n"
+    observed += "new\n"
+    i += 1
+  }
+  let diff = @moonbit-target-parity.unified_text_diff(expected, observed)
+  assert_true(diff.contains("diff omitted"))
+}
+
+///|
+test "HTML suite report escapes untrusted scenario and output text" {
+  let run : @moonbit-target-parity.ScenarioRun = {
+    schema_version: 1,
+    name: "<script>scenario</script>",
+    expected_targets: ["wasm", "js"],
+    observations: [
+      {
+        target: "wasm",
+        exit_code: 0,
+        stdout: "<script>1</script>",
+        stderr: "",
+      },
+      { target: "js", exit_code: 0, stdout: "<script>2</script>", stderr: "", },
+    ],
+    policy: @moonbit-target-parity.ComparePolicy::strict(),
+  }
+  let report = @moonbit-target-parity.compare_suite([run])
+  let html = @moonbit-target-parity.suite_report_to_html(report)
+  assert_true(html.contains("&lt;script&gt;scenario&lt;/script&gt;"))
+  assert_true(html.contains("&lt;script&gt;1&lt;/script&gt;"))
+  assert_true(!html.contains("<script>1"))
+  assert_true(html.contains("<meta charset=\"utf-8\">"))
+}
+
+///|
 test "expected-result contracts catch identical cross-target regressions" {
   let scenario : @moonbit-target-parity.ScenarioRun = {
     schema_version: 1,
@@ -286,6 +408,8 @@ test "expected-result contracts catch identical cross-target regressions" {
       trim_one_final_newline: false,
       compare_stderr: true,
       compare_stdout_as_json: true,
+      strip_ansi_sgr: false,
+      trim_trailing_whitespace_per_line: false,
     },
   }
   let report = @moonbit-target-parity.compare_contract_scenario({

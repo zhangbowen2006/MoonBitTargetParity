@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0 — 2026-09-24
+
+- Added opt-in ANSI SGR stripping and per-line trailing whitespace trimming.
+- Added bounded unified text diffs to Markdown reports.
+- Added an escaped, self-contained HTML report for offline review.
+- Added coverage for normalization policy and large-diff memory limits.
+
 ## 0.2.0 — 2026-09-24
 
 - Added per-target expected-result contracts so regressions shared by all

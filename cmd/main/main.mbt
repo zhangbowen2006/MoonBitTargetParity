@@ -75,7 +75,7 @@ fn main {
   let args = @env.args()
   if args.length() != 4 {
     println(
-      "usage: moon run --target js cmd/main -- compare-json|compare-file|compare-suite-json|compare-suite-file|compare-contract-suite-file <JSON-or-path>",
+      "usage: moon run --target js cmd/main -- compare-json|compare-file|compare-suite-json|compare-suite-file|compare-contract-suite-file|compare-contract-suite-html-file <JSON-or-path>",
     )
     exit_process(2)
   } else if args[2] == "compare-json" {
@@ -135,6 +135,18 @@ fn main {
       Ok(contracts) => {
         let report = @parity.compare_contract_suite(contracts)
         println(@parity.suite_report_to_json(report))
+        exit_process(@parity.suite_report_exit_code(report))
+      }
+    }
+  } else if args[2] == "compare-contract-suite-html-file" {
+    match read_contract_suite_file(args[3]) {
+      Err(message) => {
+        println("contract suite file error: " + message)
+        exit_process(2)
+      }
+      Ok(contracts) => {
+        let report = @parity.compare_contract_suite(contracts)
+        println(@parity.suite_report_to_html(report))
         exit_process(@parity.suite_report_exit_code(report))
       }
     }

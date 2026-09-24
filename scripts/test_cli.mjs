@@ -10,6 +10,8 @@ const base = {
     trim_one_final_newline: false,
     compare_stderr: true,
     compare_stdout_as_json: false,
+    strip_ansi_sgr: false,
+    trim_trailing_whitespace_per_line: false,
   },
 };
 
@@ -72,3 +74,26 @@ if (fileFixture.status !== 1 || JSON.parse(fileFixture.stdout).status !== "diver
 }
 
 console.log("PASS: file-based JSON input path");
+
+const htmlReport = spawnSync(
+  "node",
+  ["scripts/check_backends.mjs", "examples/portable-json.json"],
+  {
+    cwd: root,
+    encoding: "utf8",
+    windowsHide: true,
+    env: {
+      ...process.env,
+      MOON_PARITY_TARGETS: "wasm,wasm-gc,js",
+      MOON_PARITY_FORMAT: "html",
+    },
+  },
+);
+if (
+  htmlReport.status !== 0 ||
+  !htmlReport.stdout.includes("<!doctype html>") ||
+  !htmlReport.stdout.includes("class=\"pass\"")
+) {
+  throw new Error(`Expected self-contained passing HTML report; got ${htmlReport.status}: ${htmlReport.stdout}${htmlReport.stderr}`);
+}
+console.log("PASS: self-contained HTML report from real target observations");

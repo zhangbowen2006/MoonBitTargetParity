@@ -21,6 +21,8 @@ pub(all) struct ComparePolicy {
   trim_one_final_newline : Bool
   compare_stderr : Bool
   compare_stdout_as_json : Bool
+  strip_ansi_sgr : Bool
+  trim_trailing_whitespace_per_line : Bool
 } derive(ToJson, FromJson)
 
 ///|
@@ -36,6 +38,8 @@ pub fn ComparePolicy::strict() -> ComparePolicy {
     trim_one_final_newline: false,
     compare_stderr: true,
     compare_stdout_as_json: false,
+    strip_ansi_sgr: false,
+    trim_trailing_whitespace_per_line: false,
   }
 }
 

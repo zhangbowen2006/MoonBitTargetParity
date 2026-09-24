@@ -10,16 +10,72 @@ fn contains_string(values : Array[String], value : String) -> Bool {
 
 ///|
 fn normalize_output(text : String, policy : ComparePolicy) -> String {
-  let normalized = if policy.normalize_line_endings {
-    text.replace_all(old="\r\n", new="\n").replace_all(old="\r", new="\n")
+  let ansi_normalized = if policy.strip_ansi_sgr {
+    strip_ansi_sgr(text)
   } else {
     text
   }
-  if policy.trim_one_final_newline && normalized.has_suffix("\n") {
-    normalized[0:normalized.length() - 1].to_owned()
+  let normalized = if policy.normalize_line_endings {
+    ansi_normalized
+    .replace_all(old="\r\n", new="\n")
+    .replace_all(old="\r", new="\n")
+  } else {
+    ansi_normalized
+  }
+  let trailing_trimmed = if policy.trim_trailing_whitespace_per_line {
+    trim_trailing_whitespace(normalized)
   } else {
     normalized
   }
+  if policy.trim_one_final_newline && trailing_trimmed.has_suffix("\n") {
+    trailing_trimmed[0:trailing_trimmed.length() - 1].to_owned()
+  } else {
+    trailing_trimmed
+  }
+}
+
+///|
+fn trim_trailing_whitespace(text : String) -> String {
+  let lines : Array[String] = []
+  for line in text.split("\n") {
+    let characters = line.to_array()
+    let mut end = characters.length()
+    while end > 0 && (characters[end - 1] == ' ' || characters[end - 1] == '\t') {
+      end -= 1
+    }
+    lines.push(String::from_iter(characters[0:end].iter()))
+  }
+  lines.join("\n")
+}
+
+///|
+/// Remove ANSI CSI SGR style sequences, preserving other escape sequences.
+fn strip_ansi_sgr(text : String) -> String {
+  let characters = text.to_array()
+  let output : Array[Char] = []
+  let mut index = 0
+  while index < characters.length() {
+    if characters[index].to_int() == 27 &&
+      index + 1 < characters.length() &&
+      characters[index + 1] == '[' {
+      let mut end = index + 2
+      while end < characters.length() &&
+            characters[end].to_int() >= 0x30 &&
+            characters[end].to_int() <= 0x3F {
+        end += 1
+      }
+      if end < characters.length() && characters[end] == 'm' {
+        index = end + 1
+      } else {
+        output.push(characters[index])
+        index += 1
+      }
+    } else {
+      output.push(characters[index])
+      index += 1
+    }
+  }
+  String::from_iter(output.iter())
 }
 
 ///|
