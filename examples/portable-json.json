@@ -13,7 +13,33 @@
         "trim_one_final_newline": false,
         "compare_stderr": false,
         "compare_stdout_as_json": true
-      }
+      },
+      "expectations": [
+        {
+          "target": "wasm",
+          "exit_code": 0,
+          "stdout": "{\"sum\":42,\"int_wrap\":-2147483648,\"label\":\"MoonBit 月 🚀\",\"ok\":true}\n",
+          "stderr": ""
+        },
+        {
+          "target": "wasm-gc",
+          "exit_code": 0,
+          "stdout": "{\"sum\":42,\"int_wrap\":-2147483648,\"label\":\"MoonBit 月 🚀\",\"ok\":true}\n",
+          "stderr": ""
+        },
+        {
+          "target": "js",
+          "exit_code": 0,
+          "stdout": "{\"sum\":42,\"int_wrap\":-2147483648,\"label\":\"MoonBit 月 🚀\",\"ok\":true}\n",
+          "stderr": ""
+        },
+        {
+          "target": "native",
+          "exit_code": 0,
+          "stdout": "{\"sum\":42,\"int_wrap\":-2147483648,\"label\":\"MoonBit 月 🚀\",\"ok\":true}\n",
+          "stderr": ""
+        }
+      ]
     }
   ]
 }

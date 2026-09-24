@@ -1,6 +1,6 @@
 # MoonBit Target Parity
 
-**给 MoonBit 多后端项目使用的行为契约对照库。**同一个测试场景在 `wasm`、`wasm-gc`、`js`、`native` 等目标运行后，把退出码、标准输出和可选标准错误交给纯 MoonBit API；工具会指出哪些字段出现差异、缺少哪些目标证据，并生成 JSON 或 Markdown 报告。
+**给 MoonBit 多后端项目使用的行为契约对照库。**同一个测试场景在 `wasm`、`wasm-gc`、`js`、`native` 等目标运行后，把退出码、标准输出和可选标准错误交给纯 MoonBit API；工具会同时比较后端之间的一致性与提交的预期结果，因此所有后端一起发生相同回归也会被发现。
 
 公开仓库：[zhangbowen2006/MoonBitTargetParity](https://github.com/zhangbowen2006/MoonBitTargetParity) · [GitHub Actions](https://github.com/zhangbowen2006/MoonBitTargetParity/actions) · [Mooncakes 包页](https://mooncakes.io/docs/zhangbowen2006/moonbit-target-parity)
 
@@ -27,7 +27,7 @@ moon run --target js cmd/probe
 moon run --target native cmd/probe
 ```
 
-然后将这些真实捕获结果交给 MoonBit 比较器。完整四目标矩阵要求本机具备相应 MoonBit 运行时和 native C 编译器。只想在支持的目标上做本地验证时，可显式指定，例如：
+然后将这些真实捕获结果交给 MoonBit 比较器，并逐目标检查配置中提交的 `expectations`。完整四目标矩阵要求本机具备相应 MoonBit 运行时和 native C 编译器。只想在支持的目标上做本地验证时，可显式指定，例如：
 
 ```powershell
 $env:MOON_PARITY_TARGETS = 'wasm,wasm-gc,js'
@@ -72,10 +72,27 @@ let report = @parity.compare_scenario(run)
 println(@parity.report_to_markdown(report))
 ```
 
+只有跨后端互相比对，无法发现所有后端一起产生的同一错误结果。需要把已审核结果作为基线时，为每个目标提交 expectation，再调用 contract API：
+
+```moonbit
+let contract : @parity.ContractScenario = {
+  scenario: run,
+  expectations: [
+    { target: "wasm", exit_code: 0, stdout: "{\"ok\":true}\n", stderr: "" },
+    { target: "js", exit_code: 0, stdout: "{\"ok\":true}\n", stderr: "" },
+    { target: "native", exit_code: 0, stdout: "{\"ok\":true}\n", stderr: "" },
+  ],
+}
+let report = @parity.compare_contract_scenario(contract)
+println(@parity.report_to_markdown(report))
+```
+
+基线非空时必须为每个声明目标提供一条 expectation；少目标返回 `inconclusive`，结果不符返回 `divergent`，差异会标记为 `expected-result`。留空 expectations 才是 parity-only 模式。
+
 安装已发布版本：
 
 ```sh
-moon add zhangbowen2006/moonbit-target-parity@0.1.1
+moon add zhangbowen2006/moonbit-target-parity@0.2.0
 ```
 
 调用方的 `moon.pkg` 中导入：
@@ -102,7 +119,7 @@ node scripts/check_backends.mjs
 - `compare_stderr` 默认开启；跨后端运行器自身日志可能混在 stderr 时，可对该场景显式关闭。退出码和 stdout 仍然比较。
 - `compare_stdout_as_json` 开启后，合法 JSON stdout 按 JSON 结构比较：对象成员顺序不重要，数组顺序仍重要；差异报告包含转义过的 JSON Pointer 路径。JSON 无法解析时回退到文本精确比较；该选项不会替代 JSON 格式有效性测试。
 - 第一个实际出现的 `expected_targets` 作为参考目标，目标顺序由调用者声明并写入报告。
-- 已观察到差异时返回 `divergent`。没有差异但缺少、重复或多出目标，或者声明不足两个目标时返回 `inconclusive`。
+- 已观察到跨目标差异或预期结果回归时返回 `divergent`。没有差异但缺少、重复或多出目标，或者声明不足两个目标时返回 `inconclusive`。
 - 一个场景可报告字段 `exit_code`、`stdout`、`stderr` 差异；套件 API 可聚合多个场景。
 
 CLI/CI 状态码：`0` 通过、`1` 已确认差异、`2` 输入错误或证据不完整。

@@ -23,6 +23,16 @@ fn parse_suite(text : String) -> Array[@parity.ScenarioRun]? {
 }
 
 ///|
+fn parse_contract_suite(text : String) -> Array[@parity.ContractScenario]? {
+  try {
+    let json_value = @json.parse(text)
+    Some(@json.from_json(json_value))
+  } catch {
+    _ => None
+  }
+}
+
+///|
 fn read_scenario_file(path : String) -> Result[@parity.ScenarioRun, String] {
   let file = read_text_result_for_path(path)
   if !file.is_ok() {
@@ -47,11 +57,25 @@ fn read_suite_file(path : String) -> Result[Array[@parity.ScenarioRun], String] 
 }
 
 ///|
+fn read_contract_suite_file(
+  path : String,
+) -> Result[Array[@parity.ContractScenario], String] {
+  let file = read_text_result_for_path(path)
+  if !file.is_ok() {
+    return Err(file.value())
+  }
+  match parse_contract_suite(file.value()) {
+    Some(contracts) => Ok(contracts)
+    None => Err("invalid contract suite JSON")
+  }
+}
+
+///|
 fn main {
   let args = @env.args()
   if args.length() != 4 {
     println(
-      "usage: moon run --target js cmd/main -- compare-json|compare-file|compare-suite-json|compare-suite-file <JSON-or-path>",
+      "usage: moon run --target js cmd/main -- compare-json|compare-file|compare-suite-json|compare-suite-file|compare-contract-suite-file <JSON-or-path>",
     )
     exit_process(2)
   } else if args[2] == "compare-json" {
@@ -98,6 +122,18 @@ fn main {
       }
       Ok(scenarios) => {
         let report = @parity.compare_suite(scenarios)
+        println(@parity.suite_report_to_json(report))
+        exit_process(@parity.suite_report_exit_code(report))
+      }
+    }
+  } else if args[2] == "compare-contract-suite-file" {
+    match read_contract_suite_file(args[3]) {
+      Err(message) => {
+        println("contract suite file error: " + message)
+        exit_process(2)
+      }
+      Ok(contracts) => {
+        let report = @parity.compare_contract_suite(contracts)
         println(@parity.suite_report_to_json(report))
         exit_process(@parity.suite_report_exit_code(report))
       }

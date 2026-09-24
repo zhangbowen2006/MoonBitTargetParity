@@ -7,10 +7,10 @@
 | 命令 | 结果 |
 | --- | --- |
 | `moon check --deny-warn` | 通过 |
-| `moon test --deny-warn` | 12/12 通过 |
+| `moon test --deny-warn` | 14/14 通过 |
 | `moon info`、`moon fmt` | 通过；生成接口待随提交检查 |
 | `moon check --target js --deny-warn` | 通过 |
-| `moon test --target wasm-gc --deny-warn` | 12/12 通过 |
+| `moon test --target wasm-gc --deny-warn` | 14/14 通过 |
 | `moon build --target js` | 通过 |
 | `node scripts/test_cli.mjs` | pass/divergent/inconclusive/坏 JSON 四条真实 CLI 子进程路径通过 |
 | `MOON_PARITY_TARGETS=wasm,wasm-gc,js node scripts/check_backends.mjs` | 配置文件驱动的三个真实目标结果相同，报告 pass |

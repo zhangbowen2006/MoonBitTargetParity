@@ -9,7 +9,7 @@
 | 功能真实可运行 | 本地 wasm/wasm-gc/js 探针一致；核心 12 项测试覆盖差异及错误状态；Actions 35986962761 验证四目标 | 本机没有 native C 编译器，但远程 Ubuntu 已执行 native 探针 |
 | MoonBit 主体 | 比较、归一化、suite 聚合和报告由 MoonBit 实现；Node 只负责运行外部矩阵 | 完成源文件占比核对和公开版本测试 |
 | README/示例/API | 中文 README、JSON fixture、真实跨目标脚本及公共 API | 已有材料需随新仓库一起公开 |
-| CI/构建/测试 | [Actions 35986962761](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/35986962761) 在 Ubuntu 对 all targets 通过；本地 12/12 测试通过 | 该 run 对应提交 `045b926`，后续改动需以新 CI 为准 |
-| Mooncakes | 0.1.1 已正式发布；公开 manifest build_status=success、has_package=true | 发布要求满足，manifest 和包页已核验 |
+| CI/构建/测试 | [Actions 35987911060](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/35987911060) 对 0.1.1 文档版 all targets 通过；当前源码本地 14/14 测试通过 | 0.2.0 baseline 功能已进入工作树，需等待对应提交 CI 后再提交申报材料 |
+| Mooncakes | 0.1.1 已正式发布；公开 manifest build_status=success、has_package=true | 0.2.0 加入已审核结果基线，发布需等对应提交 CI 成功后核验 |
 | 许可证/来源 | Apache-2.0；core 为工具链依赖，Node 只用内建模块 | 发布前复核 license/package contents |
 | 新旧项目关系 | 新建 `MoonBitTargetParity`，项目名称、核心功能和代码均与八月 MoonBVHKit 不同 | 报名表只提交新仓库，旧的 MoonKeyguard 链接不可继续当新选题 |

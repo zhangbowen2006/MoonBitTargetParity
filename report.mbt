@@ -63,11 +63,13 @@ pub fn report_to_markdown(report : ParityReport) -> String {
       "\n\n"
   }
   if report.differences.length() > 0 {
-    output += "| Target | Field | JSON path | Reference | Observed |\n"
-    output += "| --- | --- | --- | --- | --- |\n"
+    output += "| Target | Check | Field | JSON path | Reference | Observed |\n"
+    output += "| --- | --- | --- | --- | --- | --- |\n"
     for difference in report.differences {
       output += "| `" +
         difference.target +
+        "` | `" +
+        difference.kind +
         "` | `" +
         difference.field +
         "` | `" +

@@ -58,6 +58,20 @@ pub extend ScenarioRun with ToJson::{to_json}
 pub extend ScenarioRun with @json.FromJson::{from_json}
 
 ///|
+/// An optional accepted result contract for each declared target. When a
+/// contract is provided, parity and expected-result checks both have to pass.
+pub(all) struct ContractScenario {
+  scenario : ScenarioRun
+  expectations : Array[Observation]
+} derive(ToJson, FromJson)
+
+///|
+pub extend ContractScenario with ToJson::{to_json}
+
+///|
+pub extend ContractScenario with @json.FromJson::{from_json}
+
+///|
 pub enum Status {
   Pass
   Divergent
@@ -67,6 +81,7 @@ pub enum Status {
 ///|
 pub(all) struct FieldDifference {
   target : String
+  kind : String
   field : String
   path : String?
   reference : String

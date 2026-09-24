@@ -100,12 +100,16 @@ for (const scenario of config.scenarios) {
     });
   }
 
+  const expectations = (scenario.expectations ?? []).filter(result => targets.includes(result.target));
   scenarios.push({
-    schema_version: 1,
-    name: scenario.name,
-    expected_targets: targets,
-    observations,
-    policy,
+    scenario: {
+      schema_version: 1,
+      name: scenario.name,
+      expected_targets: targets,
+      observations,
+      policy,
+    },
+    expectations,
   });
 }
 
@@ -115,7 +119,7 @@ try {
   writeFileSync(suiteFile, JSON.stringify(scenarios), {encoding: "utf8", mode: 0o600});
   const report = spawnSync(
     "moon",
-    ["run", "--target", "js", "cmd/main", "--", "compare-suite-file", suiteFile],
+    ["run", "--target", "js", "cmd/main", "--", "compare-contract-suite-file", suiteFile],
     {cwd: repoRoot, encoding: "utf8", timeout: timeoutMs, maxBuffer: 16 * 1024 * 1024, windowsHide: true},
   );
   if (report.error) {

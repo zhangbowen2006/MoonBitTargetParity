@@ -6,6 +6,10 @@ import {
 }
 
 // Values
+pub fn compare_contract_scenario(ContractScenario) -> ParityReport
+
+pub fn compare_contract_suite(Array[ContractScenario]) -> SuiteReport
+
 pub fn compare_scenario(ScenarioRun) -> ParityReport
 
 pub fn compare_suite(Array[ScenarioRun]) -> SuiteReport
@@ -33,8 +37,16 @@ pub fn ComparePolicy::from_json(Json, @json.JsonPath) -> Self raise @json.JsonDe
 pub fn ComparePolicy::strict() -> Self
 pub fn ComparePolicy::to_json(Self) -> Json
 
+pub(all) struct ContractScenario {
+  scenario : ScenarioRun
+  expectations : Array[Observation]
+} derive(ToJson, @json.FromJson)
+pub fn ContractScenario::from_json(Json, @json.JsonPath) -> Self raise @json.JsonDecodeError
+pub fn ContractScenario::to_json(Self) -> Json
+
 pub(all) struct FieldDifference {
   target : String
+  kind : String
   field : String
   path : String?
   reference : String

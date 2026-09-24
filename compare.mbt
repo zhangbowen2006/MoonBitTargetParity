@@ -102,6 +102,7 @@ pub fn compare_scenario(run : ScenarioRun) -> ParityReport {
                 observation,
                 run.policy,
                 differences,
+                "parity",
               )
               break
             }
@@ -149,10 +150,12 @@ fn compare_observation_fields(
   observed : Observation,
   policy : ComparePolicy,
   differences : Array[FieldDifference],
+  kind : String,
 ) -> Unit {
   if reference.exit_code != observed.exit_code {
     differences.push({
       target: observed.target,
+      kind,
       field: "exit_code",
       path: None,
       reference: reference.exit_code.to_string(),
@@ -170,6 +173,7 @@ fn compare_observation_fields(
             reference_json,
             observed_json,
             observed.target,
+            kind,
             "",
             0,
             differences,
@@ -179,6 +183,7 @@ fn compare_observation_fields(
         if reference_stdout != observed_stdout {
           differences.push({
             target: observed.target,
+            kind,
             field: "stdout",
             path: None,
             reference: reference_stdout,
@@ -189,6 +194,7 @@ fn compare_observation_fields(
   } else if reference_stdout != observed_stdout {
     differences.push({
       target: observed.target,
+      kind,
       field: "stdout",
       path: None,
       reference: reference_stdout,
@@ -201,6 +207,7 @@ fn compare_observation_fields(
     if reference_stderr != observed_stderr {
       differences.push({
         target: observed.target,
+        kind,
         field: "stderr",
         path: None,
         reference: reference_stderr,
@@ -223,6 +230,7 @@ fn collect_json_differences(
   reference : Json,
   observed : Json,
   target : String,
+  kind : String,
   path : String,
   depth : Int,
   differences : Array[FieldDifference],
@@ -233,6 +241,7 @@ fn collect_json_differences(
   if depth >= 64 {
     differences.push({
       target,
+      kind,
       field: "stdout_json",
       path: Some(if path == "" { "/" } else { path }),
       reference: "<maximum comparison depth>",
@@ -257,6 +266,7 @@ fn collect_json_differences(
               reference_value,
               observed_value,
               target,
+              kind,
               child_path,
               depth + 1,
               differences,
@@ -264,6 +274,7 @@ fn collect_json_differences(
           (Some(reference_value), None) =>
             push_json_difference(
               target,
+              kind,
               child_path,
               reference_value,
               Json::string("<missing>"),
@@ -272,6 +283,7 @@ fn collect_json_differences(
           (None, Some(observed_value)) =>
             push_json_difference(
               target,
+              kind,
               child_path,
               Json::string("<missing>"),
               observed_value,
@@ -293,6 +305,7 @@ fn collect_json_differences(
           reference_array[index],
           observed_array[index],
           target,
+          kind,
           path + "/" + index.to_string(),
           depth + 1,
           differences,
@@ -302,6 +315,7 @@ fn collect_json_differences(
       if reference_array.length() != observed_array.length() {
         differences.push({
           target,
+          kind,
           field: "stdout_json",
           path: Some(path + "/length"),
           reference: reference_array.length().to_string(),
@@ -309,13 +323,15 @@ fn collect_json_differences(
         })
       }
     }
-    _ => push_json_difference(target, path, reference, observed, differences)
+    _ =>
+      push_json_difference(target, kind, path, reference, observed, differences)
   }
 }
 
 ///|
 fn push_json_difference(
   target : String,
+  kind : String,
   path : String,
   reference : Json,
   observed : Json,
@@ -323,6 +339,7 @@ fn push_json_difference(
 ) -> Unit {
   differences.push({
     target,
+    kind,
     field: "stdout_json",
     path: Some(if path == "" { "/" } else { path }),
     reference: reference.stringify(),
@@ -338,7 +355,96 @@ fn escape_json_pointer_segment(segment : String) -> String {
 ///|
 /// Compare a batch of independent scenarios and aggregate their status.
 pub fn compare_suite(runs : Array[ScenarioRun]) -> SuiteReport {
-  let reports = runs.map(run => compare_scenario(run))
+  aggregate_suite_reports(runs.map(run => compare_scenario(run)))
+}
+
+///|
+/// Compare target parity and any committed expected-result contract.
+/// An empty expectations array means parity-only mode.
+pub fn compare_contract_scenario(contract : ContractScenario) -> ParityReport {
+  let run = contract.scenario
+  let base = compare_scenario(run)
+  if contract.expectations.length() == 0 {
+    return base
+  }
+  let differences = base.differences.copy()
+  let diagnostics = base.diagnostics.copy()
+  let seen_expectations : Array[String] = []
+  for expectation in contract.expectations {
+    if !contains_string(run.expected_targets, expectation.target) {
+      diagnostics.push(
+        "expectation target is not declared: " + expectation.target,
+      )
+    }
+    if contains_string(seen_expectations, expectation.target) {
+      diagnostics.push(
+        "duplicate expected-result contract for " + expectation.target,
+      )
+    } else {
+      seen_expectations.push(expectation.target)
+      match find_observation(run.observations, expectation.target) {
+        Some(actual) =>
+          compare_observation_fields(
+            expectation,
+            actual,
+            run.policy,
+            differences,
+            "expected-result",
+          )
+        None => ()
+      }
+    }
+  }
+  for target in run.expected_targets {
+    if !contains_string(seen_expectations, target) {
+      diagnostics.push("missing expected-result contract for " + target)
+    }
+  }
+  let status = if differences.length() > 0 {
+    Status::Divergent
+  } else if diagnostics.length() > 0 || base.status is Status::Inconclusive {
+    Status::Inconclusive
+  } else {
+    Status::Pass
+  }
+  {
+    scenario: base.scenario,
+    status,
+    diagnostics,
+    reference_target: base.reference_target,
+    compared_targets: base.compared_targets,
+    missing_targets: base.missing_targets,
+    unexpected_targets: base.unexpected_targets,
+    duplicate_targets: base.duplicate_targets,
+    differences,
+  }
+}
+
+///|
+/// Aggregate scenarios that include per-target expected results.
+pub fn compare_contract_suite(
+  contracts : Array[ContractScenario],
+) -> SuiteReport {
+  aggregate_suite_reports(
+    contracts.map(contract => compare_contract_scenario(contract)),
+  )
+}
+
+///|
+fn find_observation(
+  observations : Array[Observation],
+  target : String,
+) -> Observation? {
+  for observation in observations {
+    if observation.target == target {
+      return Some(observation)
+    }
+  }
+  None
+}
+
+///|
+fn aggregate_suite_reports(reports : Array[ParityReport]) -> SuiteReport {
   let mut passed = 0
   let mut divergent = 0
   let mut inconclusive = 0

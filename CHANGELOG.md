@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.0 — 2026-09-24
+
+- Added per-target expected-result contracts so regressions shared by all
+  backends can be detected alongside cross-target differences.
+- Added contract-suite JSON input and `expected-result` report classification.
+- Extended the real matrix example with reviewed output baselines.
+- The core API addition is backward-compatible with parity-only callers.
+
 ## 0.1.1 — 2026-09-24
 
 - Updated README and acceptance evidence after publishing 0.1.0 to Mooncakes.

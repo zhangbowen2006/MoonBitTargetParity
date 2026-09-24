@@ -270,3 +270,57 @@ test "suite divergence takes precedence over missing target evidence" {
   assert_true(suite.status is @moonbit-target-parity.Status::Divergent)
   assert_eq(@moonbit-target-parity.suite_report_exit_code(suite), 1)
 }
+
+///|
+test "expected-result contracts catch identical cross-target regressions" {
+  let scenario : @moonbit-target-parity.ScenarioRun = {
+    schema_version: 1,
+    name: "shared-regression",
+    expected_targets: ["wasm", "js"],
+    observations: [
+      { target: "wasm", exit_code: 0, stdout: "{\"value\":2}", stderr: "", },
+      { target: "js", exit_code: 0, stdout: "{\"value\":2}", stderr: "", },
+    ],
+    policy: {
+      normalize_line_endings: true,
+      trim_one_final_newline: false,
+      compare_stderr: true,
+      compare_stdout_as_json: true,
+    },
+  }
+  let report = @moonbit-target-parity.compare_contract_scenario({
+    scenario,
+    expectations: [
+      { target: "wasm", exit_code: 0, stdout: "{\"value\":1}", stderr: "", },
+      { target: "js", exit_code: 0, stdout: "{\"value\":1}", stderr: "", },
+    ],
+  })
+  assert_true(report.status is @moonbit-target-parity.Status::Divergent)
+  assert_eq(report.differences.length(), 2)
+  assert_eq(report.differences[0].kind, "expected-result")
+  assert_eq(report.differences[0].path, Some("/value"))
+}
+
+///|
+test "partial expected-result contract is inconclusive" {
+  let scenario : @moonbit-target-parity.ScenarioRun = {
+    schema_version: 1,
+    name: "partial-contract",
+    expected_targets: ["wasm", "js"],
+    observations: [
+      { target: "wasm", exit_code: 0, stdout: "same", stderr: "", },
+      { target: "js", exit_code: 0, stdout: "same", stderr: "", },
+    ],
+    policy: @moonbit-target-parity.ComparePolicy::strict(),
+  }
+  let report = @moonbit-target-parity.compare_contract_scenario({
+    scenario,
+    expectations: [
+      { target: "wasm", exit_code: 0, stdout: "same", stderr: "", },
+    ],
+  })
+  assert_true(report.status is @moonbit-target-parity.Status::Inconclusive)
+  assert_true(
+    report.diagnostics.contains("missing expected-result contract for js"),
+  )
+}
