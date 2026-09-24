@@ -2,6 +2,8 @@
 
 **给 MoonBit 多后端项目使用的行为契约对照库。**同一个测试场景在 `wasm`、`wasm-gc`、`js`、`native` 等目标运行后，把退出码、标准输出和可选标准错误交给纯 MoonBit API；工具会指出哪些字段出现差异、缺少哪些目标证据，并生成 JSON 或 Markdown 报告。
 
+公开仓库：[zhangbowen2006/MoonBitTargetParity](https://github.com/zhangbowen2006/MoonBitTargetParity) · 首个远程 CI：[35986962761](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/35986962761)
+
 ## 为什么做这个
 
 MoonBit 项目可以面向多个编译后端。`moon test --target all` 能在多个目标上运行项目自己的断言；MoonBit Target Parity 补充的是同一组输入和场景下，对程序可观察结果进行跨目标对照，适合序列化器、协议解析器、数值库、命令行工具和其他需要保持输出一致的库。
@@ -70,16 +72,28 @@ let report = @parity.compare_scenario(run)
 println(@parity.report_to_markdown(report))
 ```
 
-先从源码使用：
+安装已发布版本：
 
 ```sh
-moon update
+moon add zhangbowen2006/moonbit-target-parity@0.1.0
+```
+
+调用方的 `moon.pkg` 中导入：
+
+```moonbit
+import {
+  "zhangbowen2006/moonbit-target-parity" @parity,
+}
+```
+
+从仓库源码开发和复验：
+
+```sh
 moon test --deny-warn
 node scripts/test_cli.mjs
 node scripts/check_backends.mjs
 ```
 
-发布前会更新 Mooncakes 安装命令。本项目目前处于新选题整改开发阶段，未将未发布状态写成已发布。
 
 ## 比较规则
 

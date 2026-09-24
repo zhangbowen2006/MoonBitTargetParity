@@ -2,6 +2,7 @@
 
 申请人：张博文｜九月新项目赛道｜Apache-2.0<br>
 新仓库：https://github.com/zhangbowen2006/MoonBitTargetParity<br>
+首个远程 CI： https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/35986962761<br>
 项目模块：`zhangbowen2006/moonbit-target-parity`
 
 MoonBit 项目可编译到 `wasm`、`wasm-gc`、`js`、`native` 等后端。对数字运算、编码器、协议解析器和命令行库，开发者常需要确认同一输入在目标后端上的退出码和输出是否一致。MoonBit 自带跨目标测试能力，适合验证各后端自己的断言；本项目补充一层可复用的行为契约比较：调用方在各目标运行相同场景，把捕获结果交给纯 MoonBit API，自动列出具体字段差异。
