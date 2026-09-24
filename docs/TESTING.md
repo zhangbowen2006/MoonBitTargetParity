@@ -22,3 +22,5 @@
 首个公开提交 `045b9263b878e4e1d2de6e829a67bdca6fa68039` 的 [GitHub Actions run 35986962761](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/35986962761) 已成功。复审材料同步提交 `6e863bff95b0a6ee35ec5f5f4302e07aee180727` 的 [run 35987471426](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/35987471426) 也成功。Mooncakes 0.1.0 的正式发布命令返回 `200 OK`，公开 manifest 显示构建成功且包可用。每条 CI 证据只对应各自提交。
 
 0.1.1 文档同步提交 `da21a2ad9debea23b763b06b7e330612293af38a` 的 [run 35987911060](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/35987911060) 成功。随后 `moon publish --frozen` 返回 `200 OK`；公开 manifest 已更新为 0.1.1、构建成功且包可用。
+
+0.2.0 基线合同提交 `f8887ef36a9196226c1e1770f4685d61515e0c06` 的 [run 35990111751](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/35990111751) 成功。Ubuntu 对所有目标完成严格检查、构建、测试和实际探针。随后正式执行 `moon package --list --frozen` 与 `moon publish --frozen`；manifest 显示版本 0.2.0、构建成功、包可用且未撤回。

@@ -32,3 +32,17 @@
 成功后，执行 `moon package --list --frozen` 与 `moon publish --frozen`。
 服务器返回 `200 OK`；公开 manifest 核验为版本 0.1.1、`build_status=success`、
 `has_package=true`、`yanked=false`。包页仍为同一模块文档地址，安装命令已指向 0.1.1。
+
+## 0.2.0 预期结果合同功能
+
+2026-09-24，在提交 `f8887ef36a9196226c1e1770f4685d61515e0c06` 的
+[Actions run 35990111751](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/35990111751)
+成功后，执行 `moon package --list --frozen` 和 `moon publish --frozen`。
+命令退出码为 0，服务器返回 `200 OK`。公开 manifest 核验为：
+
+- 模块版本：`zhangbowen2006/moonbit-target-parity@0.2.0`
+- `build_status=success`
+- `has_package=true`，`yanked=false`
+
+页面：[Mooncakes 文档](https://mooncakes.io/docs/zhangbowen2006/moonbit-target-parity)；
+接口：[manifest](https://mooncakes.io/api/v0/manifest/zhangbowen2006/moonbit-target-parity)。

@@ -1,6 +1,6 @@
 # 验收差距表
 
-更新：2026-09-24。此仓库是对初次驳回后更换选题的新项目；公开仓库、远程 CI 和 Mooncakes 0.1.1 发布均已完成。
+更新：2026-09-24。此仓库是对初次驳回后更换选题的新项目；公开仓库、基线功能远程 CI 和 Mooncakes 0.2.0 发布均已完成。
 
 | 要求/反馈 | 当前证据 | 风险与下一步 |
 | --- | --- | --- |
@@ -9,7 +9,7 @@
 | 功能真实可运行 | 本地 wasm/wasm-gc/js 探针一致；核心 12 项测试覆盖差异及错误状态；Actions 35986962761 验证四目标 | 本机没有 native C 编译器，但远程 Ubuntu 已执行 native 探针 |
 | MoonBit 主体 | 比较、归一化、suite 聚合和报告由 MoonBit 实现；Node 只负责运行外部矩阵 | 完成源文件占比核对和公开版本测试 |
 | README/示例/API | 中文 README、JSON fixture、真实跨目标脚本及公共 API | 已有材料需随新仓库一起公开 |
-| CI/构建/测试 | [Actions 35987911060](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/35987911060) 对 0.1.1 文档版 all targets 通过；当前源码本地 14/14 测试通过 | 0.2.0 baseline 功能已进入工作树，需等待对应提交 CI 后再提交申报材料 |
-| Mooncakes | 0.1.1 已正式发布；公开 manifest build_status=success、has_package=true | 0.2.0 加入已审核结果基线，发布需等对应提交 CI 成功后核验 |
+| CI/构建/测试 | [Actions 35990111751](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/35990111751) 对 0.2.0 baseline 功能执行 all-target check/build/test 与四目标探针并成功；本地 14/14 测试通过 | 工程门禁已闭环；评审对选题价值仍需官方判断 |
+| Mooncakes | 0.2.0 已通过 `moon publish --frozen` 正式发布；公开 manifest build_status=success、has_package=true、yanked=false | 发布硬要求满足 |
 | 许可证/来源 | Apache-2.0；core 为工具链依赖，Node 只用内建模块 | 发布前复核 license/package contents |
 | 新旧项目关系 | 新建 `MoonBitTargetParity`，项目名称、核心功能和代码均与八月 MoonBVHKit 不同 | 报名表只提交新仓库，旧的 MoonKeyguard 链接不可继续当新选题 |
