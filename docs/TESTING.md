@@ -10,11 +10,13 @@
 | `moon test --deny-warn` | 12/12 通过 |
 | `moon info`、`moon fmt` | 通过；生成接口待随提交检查 |
 | `moon check --target js --deny-warn` | 通过 |
+| `moon test --target wasm-gc --deny-warn` | 12/12 通过 |
 | `moon build --target js` | 通过 |
 | `node scripts/test_cli.mjs` | pass/divergent/inconclusive/坏 JSON 四条真实 CLI 子进程路径通过 |
 | `MOON_PARITY_TARGETS=wasm,wasm-gc,js node scripts/check_backends.mjs` | 配置文件驱动的三个真实目标结果相同，报告 pass |
 | 默认四目标矩阵 | wasm、wasm-gc、js 完成；native 因本机没有 C 编译器而缺证，报告 inconclusive，未伪装成 pass |
+| `moon build --target all`（Windows） | 因本机未安装 C 编译器而未能构建 native；这与源代码错误不同，Ubuntu 四目标结果以 Actions 为准 |
 
 测试覆盖参考目标顺序、stdout/exit code 差异、缺少/重复/未声明目标、schema 错误、CRLF 规范化、末尾换行策略、stderr 开关、JSON 对象/数组语义、JSON Pointer 转义定位及 suite 聚合。公开 CI 在 Ubuntu 上对四个 `--target all` 目标执行检查、构建、测试和真实探针。
 
-首个公开提交 `045b9263b878e4e1d2de6e829a67bdca6fa68039` 的 [GitHub Actions run 35986962761](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/35986962761) 已成功，对应 all-target check/build/test、CLI 子进程路径及四目标探针。该证据只对应这个提交。
+首个公开提交 `045b9263b878e4e1d2de6e829a67bdca6fa68039` 的 [GitHub Actions run 35986962761](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/35986962761) 已成功。复审材料同步提交 `6e863bff95b0a6ee35ec5f5f4302e07aee180727` 的 [run 35987471426](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/35987471426) 也成功。Mooncakes 0.1.0 的正式发布命令返回 `200 OK`，公开 manifest 显示构建成功且包可用。每条 CI 证据只对应各自提交。

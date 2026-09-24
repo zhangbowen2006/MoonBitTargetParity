@@ -1,6 +1,11 @@
 # Changelog
 
-## Unreleased
+## 0.1.1 — 2026-09-24
+
+- Updated README and acceptance evidence after publishing 0.1.0 to Mooncakes.
+- No core behavior or public API changed.
+
+## 0.1.0 — 2026-09-24
 
 - Replaced the rejected VS Code shortcut topic with a MoonBit multi-backend
   behavior contract library.

@@ -2,7 +2,7 @@
 
 **给 MoonBit 多后端项目使用的行为契约对照库。**同一个测试场景在 `wasm`、`wasm-gc`、`js`、`native` 等目标运行后，把退出码、标准输出和可选标准错误交给纯 MoonBit API；工具会指出哪些字段出现差异、缺少哪些目标证据，并生成 JSON 或 Markdown 报告。
 
-公开仓库：[zhangbowen2006/MoonBitTargetParity](https://github.com/zhangbowen2006/MoonBitTargetParity) · 首个远程 CI：[35986962761](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/35986962761)
+公开仓库：[zhangbowen2006/MoonBitTargetParity](https://github.com/zhangbowen2006/MoonBitTargetParity) · 最新 CI：[35987471426](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/35987471426) · Mooncakes：[0.1.0](https://mooncakes.io/docs/zhangbowen2006/moonbit-target-parity)
 
 ## 为什么做这个
 
@@ -75,7 +75,7 @@ println(@parity.report_to_markdown(report))
 安装已发布版本：
 
 ```sh
-moon add zhangbowen2006/moonbit-target-parity@0.1.0
+moon add zhangbowen2006/moonbit-target-parity@0.1.1
 ```
 
 调用方的 `moon.pkg` 中导入：
