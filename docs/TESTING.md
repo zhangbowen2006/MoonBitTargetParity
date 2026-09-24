@@ -24,3 +24,5 @@
 0.1.1 文档同步提交 `da21a2ad9debea23b763b06b7e330612293af38a` 的 [run 35987911060](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/35987911060) 成功。随后 `moon publish --frozen` 返回 `200 OK`；公开 manifest 已更新为 0.1.1、构建成功且包可用。
 
 0.2.0 基线合同提交 `f8887ef36a9196226c1e1770f4685d61515e0c06` 的 [run 35990111751](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/35990111751) 成功。Ubuntu 对所有目标完成严格检查、构建、测试和实际探针。随后正式执行 `moon package --list --frozen` 与 `moon publish --frozen`；manifest 显示版本 0.2.0、构建成功、包可用且未撤回。
+
+0.3.0 终端规范化/HTML 报告提交 `2a3da274caca9af77f24cfc54664e813489ceb86` 的 [run 35993578803](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/35993578803) 成功。完整 4 target matrix、CLI 与真实 HTML report smoke test 均通过；随后已正式发布 Mooncakes 0.3.0，manifest 核验记录在 `docs/PUBLISHING.md`。

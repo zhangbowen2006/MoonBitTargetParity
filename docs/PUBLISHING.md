@@ -25,6 +25,14 @@
 
 页面：[Mooncakes 文档](https://mooncakes.io/docs/zhangbowen2006/moonbit-target-parity)；
 接口：[manifest](https://mooncakes.io/api/v0/manifest/zhangbowen2006/moonbit-target-parity)。
+
+## 0.3.0 诊断输出
+
+2026-09-24，在提交 `2a3da274caca9af77f24cfc54664e813489ceb86` 的
+[Actions run 35993578803](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/35993578803)
+成功后，执行 `moon package --list --frozen` 和 `moon publish --frozen`。
+命令退出码为 0、服务端返回 `200 OK`；公开 manifest 核验为 0.3.0、
+`build_status=success`、`has_package=true`、`yanked=false`。
 0.1.1 仅更新 README 和验收证据，不改变公共 API 或核心行为。
 
 2026-09-24 文档同步版本 0.1.1：提交 `da21a2ad9debea23b763b06b7e330612293af38a` 的
