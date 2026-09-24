@@ -1,6 +1,6 @@
 # Mooncakes 发布记录与清单
 
-模块：`zhangbowen2006/moonbit-target-parity`  
+模块：`zhangbowen2006/moonbit-target-parity`<br>
 仓库：<https://github.com/zhangbowen2006/MoonBitTargetParity>
 
 ## 每次发布前
