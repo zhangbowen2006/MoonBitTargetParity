@@ -17,7 +17,7 @@
 | `MOON_PARITY_TARGETS=wasm,wasm-gc,js node scripts/check_backends.mjs` | 7/7 场景通过；浮点容差吸收的细微差异仍出现在报告中 |
 | `native` 本地验证 | 未运行：Windows 环境缺 C 编译器；需等待公开 Ubuntu CI 的四目标结果 |
 
-0.5.0 首次推送的 [Actions run 36220160658](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/36220160658) 中，检查、构建和测试均成功；格式步骤因 0.10.14 对单行对象字面量新增尾逗号格式而失败。现已用同版本 formatter 更新源码，并在本机重跑严格检查、三目标测试和包清单；修复提交对应的远程 CI 仍待验证。
+0.5.0 首次推送的 [Actions run 36220160658](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/36220160658) 中，检查、构建和测试均成功；格式步骤因 0.10.14 对单行对象字面量新增尾逗号格式而失败。用同版本 formatter 修复后的提交 `d458d9ce21b40b1e1f017b43c0740cfd58316dec`，对应 [Actions run 36220634863](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/36220634863) 全部通过。
 
 测试覆盖参考目标顺序、stdout/exit code 差异、缺少/重复/未声明目标、schema 错误、CRLF 规范化、ANSI/空白规范化 opt-in、末尾换行策略、stderr 开关、JSON 对象/数组语义、JSON Pointer 转义定位/排除（含字段和数组元素新增/删除）、绝对数字容差、expected-result 基线、unified diff 与大矩阵资源上限、HTML escaping、旧 schema v1 策略兼容及 suite 聚合。公开 CI 在 Ubuntu 上对四个 `--target all` 目标执行检查、构建、测试和真实探针；0.5.0 对应的新 CI 结果待本次推送后记录。
 

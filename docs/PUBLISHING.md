@@ -26,6 +26,21 @@
 页面：[Mooncakes 文档](https://mooncakes.io/docs/zhangbowen2006/moonbit-target-parity)；
 接口：[manifest](https://mooncakes.io/api/v0/manifest/zhangbowen2006/moonbit-target-parity)。
 
+## 0.5.0 JSON 策略与 portability corpus
+
+2026-09-26，提交 `d458d9ce21b40b1e1f017b43c0740cfd58316dec` 的
+[Actions run 36220634863](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/36220634863)
+在 Ubuntu 完成严格检查、四目标构建/测试、格式、接口快照、CLI、四目标真实矩阵及包检查后，执行 `moon package --list --frozen` 和 `moon publish --frozen`。
+发布命令退出码为 0，Mooncakes 返回 `200 OK`。随后公开 manifest 核验为：
+
+- 最新版本：`0.5.0`
+- `build_status=success`
+- `has_package=true`，`yanked=false`
+- checksum：`4582f716bb4da1fdfd0f09405a22f7379bcde63301220d8af190561d8bd263b4`
+
+页面：[Mooncakes 文档](https://mooncakes.io/docs/zhangbowen2006/moonbit-target-parity)；
+接口：[manifest](https://mooncakes.io/api/v0/manifest/zhangbowen2006/moonbit-target-parity)。
+
 ## 0.3.0 诊断输出
 
 2026-09-24，在提交 `2a3da274caca9af77f24cfc54664e813489ceb86` 的
