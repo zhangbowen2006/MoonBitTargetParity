@@ -5,9 +5,9 @@ test "identical observations pass" {
     name: "stable-json",
     expected_targets: ["js", "wasm", "native"],
     observations: [
-      { target: "js", exit_code: 0, stdout: "{\"ok\":true}\n", stderr: "" },
-      { target: "wasm", exit_code: 0, stdout: "{\"ok\":true}\n", stderr: "" },
-      { target: "native", exit_code: 0, stdout: "{\"ok\":true}\n", stderr: "" },
+      { target: "js", exit_code: 0, stdout: "{\"ok\":true}\n", stderr: "", },
+      { target: "wasm", exit_code: 0, stdout: "{\"ok\":true}\n", stderr: "", },
+      { target: "native", exit_code: 0, stdout: "{\"ok\":true}\n", stderr: "", },
     ],
     policy: @moonbit-target-parity.ComparePolicy::strict(),
   })
@@ -23,8 +23,8 @@ test "changed stdout and exit status are reported" {
     name: "overflow-boundary",
     expected_targets: ["wasm", "js"],
     observations: [
-      { target: "wasm", exit_code: 0, stdout: "2147483647", stderr: "" },
-      { target: "js", exit_code: 1, stdout: "-2147483648", stderr: "panic" },
+      { target: "wasm", exit_code: 0, stdout: "2147483647", stderr: "", },
+      { target: "js", exit_code: 1, stdout: "-2147483648", stderr: "panic", },
     ],
     policy: @moonbit-target-parity.ComparePolicy::strict(),
   })
@@ -39,8 +39,8 @@ test "missing target is inconclusive" {
     name: "missing-native",
     expected_targets: ["js", "wasm", "native"],
     observations: [
-      { target: "js", exit_code: 0, stdout: "ok", stderr: "" },
-      { target: "wasm", exit_code: 0, stdout: "ok", stderr: "" },
+      { target: "js", exit_code: 0, stdout: "ok", stderr: "", },
+      { target: "wasm", exit_code: 0, stdout: "ok", stderr: "", },
     ],
     policy: @moonbit-target-parity.ComparePolicy::strict(),
   })
@@ -55,9 +55,9 @@ test "duplicate and undeclared target never silently pass" {
     name: "bad-matrix",
     expected_targets: ["js", "wasm"],
     observations: [
-      { target: "js", exit_code: 0, stdout: "ok", stderr: "" },
-      { target: "js", exit_code: 0, stdout: "ok", stderr: "" },
-      { target: "host-x", exit_code: 0, stdout: "ok", stderr: "" },
+      { target: "js", exit_code: 0, stdout: "ok", stderr: "", },
+      { target: "js", exit_code: 0, stdout: "ok", stderr: "", },
+      { target: "host-x", exit_code: 0, stdout: "ok", stderr: "", },
     ],
     policy: @moonbit-target-parity.ComparePolicy::strict(),
   })
@@ -73,8 +73,8 @@ test "newline normalization is explicit and opt-in" {
     name: "line-endings",
     expected_targets: ["js", "wasm"],
     observations: [
-      { target: "js", exit_code: 0, stdout: "a\r\nb\r\n", stderr: "" },
-      { target: "wasm", exit_code: 0, stdout: "a\nb\n", stderr: "" },
+      { target: "js", exit_code: 0, stdout: "a\r\nb\r\n", stderr: "", },
+      { target: "wasm", exit_code: 0, stdout: "a\nb\n", stderr: "", },
     ],
     policy: @moonbit-target-parity.ComparePolicy::strict(),
   })
@@ -99,8 +99,8 @@ test "one trailing newline policy does not trim more" {
     name: "one-newline",
     expected_targets: ["js", "wasm"],
     observations: [
-      { target: "js", exit_code: 0, stdout: "a", stderr: "" },
-      { target: "wasm", exit_code: 0, stdout: "a\n", stderr: "" },
+      { target: "js", exit_code: 0, stdout: "a", stderr: "", },
+      { target: "wasm", exit_code: 0, stdout: "a\n", stderr: "", },
     ],
     policy,
   })
@@ -110,8 +110,8 @@ test "one trailing newline policy does not trim more" {
     name: "two-newlines",
     expected_targets: ["js", "wasm"],
     observations: [
-      { target: "js", exit_code: 0, stdout: "a", stderr: "" },
-      { target: "wasm", exit_code: 0, stdout: "a\n\n", stderr: "" },
+      { target: "js", exit_code: 0, stdout: "a", stderr: "", },
+      { target: "wasm", exit_code: 0, stdout: "a\n\n", stderr: "", },
     ],
     policy,
   })
@@ -135,7 +135,7 @@ test "diagnostic mode can omit stderr but never stdout or exit code" {
     name: "stderr-policy",
     expected_targets: ["js", "native"],
     observations: [
-      { target: "js", exit_code: 0, stdout: "same", stderr: "host warning A" },
+      { target: "js", exit_code: 0, stdout: "same", stderr: "host warning A", },
       {
         target: "native",
         exit_code: 0,
@@ -165,8 +165,8 @@ test "JSON stdout comparison ignores object member order but preserves array ord
     name: "json-object-order",
     expected_targets: ["js", "wasm"],
     observations: [
-      { target: "js", exit_code: 0, stdout: "{\"a\":1,\"b\":2}", stderr: "" },
-      { target: "wasm", exit_code: 0, stdout: "{\"b\":2,\"a\":1}", stderr: "" },
+      { target: "js", exit_code: 0, stdout: "{\"a\":1,\"b\":2}", stderr: "", },
+      { target: "wasm", exit_code: 0, stdout: "{\"b\":2,\"a\":1}", stderr: "", },
     ],
     policy,
   })
@@ -176,8 +176,8 @@ test "JSON stdout comparison ignores object member order but preserves array ord
     name: "json-array-order",
     expected_targets: ["js", "wasm"],
     observations: [
-      { target: "js", exit_code: 0, stdout: "[1,2]", stderr: "" },
-      { target: "wasm", exit_code: 0, stdout: "[2,1]", stderr: "" },
+      { target: "js", exit_code: 0, stdout: "[1,2]", stderr: "", },
+      { target: "wasm", exit_code: 0, stdout: "[2,1]", stderr: "", },
     ],
     policy,
   })
@@ -230,8 +230,8 @@ test "suite aggregates independent scenarios without hiding divergence" {
     name: "same",
     expected_targets: ["js", "wasm"],
     observations: [
-      { target: "js", exit_code: 0, stdout: "ok", stderr: "" },
-      { target: "wasm", exit_code: 0, stdout: "ok", stderr: "" },
+      { target: "js", exit_code: 0, stdout: "ok", stderr: "", },
+      { target: "wasm", exit_code: 0, stdout: "ok", stderr: "", },
     ],
     policy: @moonbit-target-parity.ComparePolicy::strict(),
   }
@@ -239,7 +239,7 @@ test "suite aggregates independent scenarios without hiding divergence" {
     schema_version: 1,
     name: "missing",
     expected_targets: ["js", "wasm"],
-    observations: [{ target: "js", exit_code: 0, stdout: "ok", stderr: "" }],
+    observations: [{ target: "js", exit_code: 0, stdout: "ok", stderr: "", }],
     policy: @moonbit-target-parity.ComparePolicy::strict(),
   }
   let suite = @moonbit-target-parity.compare_suite([pass, missing])
@@ -256,7 +256,7 @@ test "invalid schema, empty scenario, and one-target contract are inconclusive" 
     schema_version: 9,
     name: "",
     expected_targets: ["js"],
-    observations: [{ target: "js", exit_code: 0, stdout: "ok", stderr: "" }],
+    observations: [{ target: "js", exit_code: 0, stdout: "ok", stderr: "", }],
     policy: @moonbit-target-parity.ComparePolicy::strict(),
   })
   assert_true(report.status is @moonbit-target-parity.Status::Inconclusive)
@@ -270,8 +270,8 @@ test "suite divergence takes precedence over missing target evidence" {
     name: "changed-output",
     expected_targets: ["js", "wasm"],
     observations: [
-      { target: "js", exit_code: 0, stdout: "one", stderr: "" },
-      { target: "wasm", exit_code: 0, stdout: "two", stderr: "" },
+      { target: "js", exit_code: 0, stdout: "one", stderr: "", },
+      { target: "wasm", exit_code: 0, stdout: "two", stderr: "", },
     ],
     policy: @moonbit-target-parity.ComparePolicy::strict(),
   }
@@ -279,7 +279,7 @@ test "suite divergence takes precedence over missing target evidence" {
     schema_version: 1,
     name: "missing-native",
     expected_targets: ["js", "native"],
-    observations: [{ target: "js", exit_code: 0, stdout: "ok", stderr: "" }],
+    observations: [{ target: "js", exit_code: 0, stdout: "ok", stderr: "", }],
     policy: @moonbit-target-parity.ComparePolicy::strict(),
   }
   let suite = @moonbit-target-parity.compare_suite([divergent, missing])
@@ -332,7 +332,7 @@ test "ANSI SGR and trailing whitespace normalization are opt-in" {
         stdout: "\u{1b}[31mred\u{1b}[0m  \nplain\t",
         stderr: "",
       },
-      { target: "js", exit_code: 0, stdout: "red\nplain", stderr: "" },
+      { target: "js", exit_code: 0, stdout: "red\nplain", stderr: "", },
     ],
     policy,
   })
@@ -359,7 +359,7 @@ test "ANSI SGR and trailing whitespace normalization are opt-in" {
         stdout: "\u{1b}[31mred\u{1b}[0m  \nplain\t",
         stderr: "",
       },
-      { target: "js", exit_code: 0, stdout: "red\nplain", stderr: "" },
+      { target: "js", exit_code: 0, stdout: "red\nplain", stderr: "", },
     ],
     policy: strict_policy,
   })
@@ -387,8 +387,13 @@ test "HTML suite report escapes untrusted scenario and output text" {
     name: "<script>scenario</script>",
     expected_targets: ["wasm", "js"],
     observations: [
-      { target: "wasm", exit_code: 0, stdout: "<script>1</script>", stderr: "" },
-      { target: "js", exit_code: 0, stdout: "<script>2</script>", stderr: "" },
+      {
+        target: "wasm",
+        exit_code: 0,
+        stdout: "<script>1</script>",
+        stderr: "",
+      },
+      { target: "js", exit_code: 0, stdout: "<script>2</script>", stderr: "", },
     ],
     policy: @moonbit-target-parity.ComparePolicy::strict(),
   }
@@ -491,8 +496,8 @@ test "unignored structural JSON differences retain precise paths" {
     name: "visible-structural-json-differences",
     expected_targets: ["wasm", "js"],
     observations: [
-      { target: "wasm", exit_code: 0, stdout: "{\"items\":[1,2]}", stderr: "" },
-      { target: "js", exit_code: 0, stdout: "{\"items\":[1]}", stderr: "" },
+      { target: "wasm", exit_code: 0, stdout: "{\"items\":[1,2]}", stderr: "", },
+      { target: "js", exit_code: 0, stdout: "{\"items\":[1]}", stderr: "", },
     ],
     policy: {
       normalize_line_endings: true,
@@ -519,8 +524,8 @@ test "invalid pointer and negative tolerance do not yield a passing report" {
     name: "invalid-comparison-policy",
     expected_targets: ["wasm", "js"],
     observations: [
-      { target: "wasm", exit_code: 0, stdout: "{\"value\":1}", stderr: "" },
-      { target: "js", exit_code: 0, stdout: "{\"value\":1}", stderr: "" },
+      { target: "wasm", exit_code: 0, stdout: "{\"value\":1}", stderr: "", },
+      { target: "js", exit_code: 0, stdout: "{\"value\":1}", stderr: "", },
     ],
     policy: {
       normalize_line_endings: true,
@@ -544,8 +549,8 @@ test "expected-result contracts catch identical cross-target regressions" {
     name: "shared-regression",
     expected_targets: ["wasm", "js"],
     observations: [
-      { target: "wasm", exit_code: 0, stdout: "{\"value\":2}", stderr: "" },
-      { target: "js", exit_code: 0, stdout: "{\"value\":2}", stderr: "" },
+      { target: "wasm", exit_code: 0, stdout: "{\"value\":2}", stderr: "", },
+      { target: "js", exit_code: 0, stdout: "{\"value\":2}", stderr: "", },
     ],
     policy: {
       normalize_line_endings: true,
@@ -561,8 +566,8 @@ test "expected-result contracts catch identical cross-target regressions" {
   let report = @moonbit-target-parity.compare_contract_scenario({
     scenario,
     expectations: [
-      { target: "wasm", exit_code: 0, stdout: "{\"value\":1}", stderr: "" },
-      { target: "js", exit_code: 0, stdout: "{\"value\":1}", stderr: "" },
+      { target: "wasm", exit_code: 0, stdout: "{\"value\":1}", stderr: "", },
+      { target: "js", exit_code: 0, stdout: "{\"value\":1}", stderr: "", },
     ],
   })
   assert_true(report.status is @moonbit-target-parity.Status::Divergent)
@@ -578,14 +583,16 @@ test "partial expected-result contract is inconclusive" {
     name: "partial-contract",
     expected_targets: ["wasm", "js"],
     observations: [
-      { target: "wasm", exit_code: 0, stdout: "same", stderr: "" },
-      { target: "js", exit_code: 0, stdout: "same", stderr: "" },
+      { target: "wasm", exit_code: 0, stdout: "same", stderr: "", },
+      { target: "js", exit_code: 0, stdout: "same", stderr: "", },
     ],
     policy: @moonbit-target-parity.ComparePolicy::strict(),
   }
   let report = @moonbit-target-parity.compare_contract_scenario({
     scenario,
-    expectations: [{ target: "wasm", exit_code: 0, stdout: "same", stderr: "" }],
+    expectations: [
+      { target: "wasm", exit_code: 0, stdout: "same", stderr: "", },
+    ],
   })
   assert_true(report.status is @moonbit-target-parity.Status::Inconclusive)
   assert_true(
