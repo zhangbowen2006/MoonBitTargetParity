@@ -22,6 +22,8 @@
     "compare_stderr": true,
     "compare_stdout_as_json": false,
     "strip_ansi_sgr": false,
-    "trim_trailing_whitespace_per_line": false
+    "trim_trailing_whitespace_per_line": false,
+    "absolute_number_tolerance": 0,
+    "ignored_json_pointers": []
   }
 }

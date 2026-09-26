@@ -21,17 +21,19 @@ try {
 }
 
 if (config.schema_version !== 1) fail("matrix config schema_version must be 1");
-const packagePath = config.package_path;
-if (
-  typeof packagePath !== "string" ||
-  packagePath.length === 0 ||
-  isAbsolute(packagePath) ||
-  packagePath.includes("\\") ||
-  packagePath.split("/").includes("..") ||
-  !/^[A-Za-z0-9_./-]+$/.test(packagePath)
-) {
-  fail("package_path must be a safe module-relative MoonBit package path");
+function validatePackagePath(packagePath) {
+  if (
+    typeof packagePath !== "string" ||
+    packagePath.length === 0 ||
+    isAbsolute(packagePath) ||
+    packagePath.includes("\\") ||
+    packagePath.split("/").includes("..") ||
+    !/^[A-Za-z0-9_./-]+$/.test(packagePath)
+  ) {
+    fail("package_path must be a safe module-relative MoonBit package path");
+  }
 }
+validatePackagePath(config.package_path);
 
 const targets = (targetOverride ?? config.targets?.join(",") ?? "")
   .split(",")
@@ -59,6 +61,8 @@ for (const scenario of config.scenarios) {
     fail("each scenario needs a non-empty name");
   }
   const args = scenario.args ?? [];
+  const scenarioPackagePath = scenario.package_path ?? config.package_path;
+  validatePackagePath(scenarioPackagePath);
   if (!Array.isArray(args) || args.some(arg => typeof arg !== "string")) {
     fail(`scenario ${scenario.name}: args must be an array of strings`);
   }
@@ -72,12 +76,14 @@ for (const scenario of config.scenarios) {
     compare_stdout_as_json: false,
     strip_ansi_sgr: false,
     trim_trailing_whitespace_per_line: false,
+    absolute_number_tolerance: 0,
+    ignored_json_pointers: [],
     ...(scenario.policy ?? {}),
   };
   const observations = [];
 
   for (const target of targets) {
-    const moonArgs = ["run", "--target", target, packagePath];
+    const moonArgs = ["run", "--target", target, scenarioPackagePath];
     if (args.length > 0) moonArgs.push("--", ...args);
     const run = spawnSync("moon", moonArgs, {
       cwd: repoRoot,
@@ -106,7 +112,14 @@ for (const scenario of config.scenarios) {
     });
   }
 
-  const expectations = (scenario.expectations ?? []).filter(result => targets.includes(result.target));
+  const expectations = [];
+  for (const expected of scenario.expectations ?? []) {
+    if (expected.target === "*") {
+      for (const target of targets) expectations.push({...expected, target});
+    } else if (targets.includes(expected.target)) {
+      expectations.push(expected);
+    }
+  }
   scenarios.push({
     scenario: {
       schema_version: 1,

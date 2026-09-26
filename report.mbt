@@ -34,6 +34,7 @@ pub fn report_to_json(report : ParityReport) -> String {
       ("unexpected_targets", @json.to_json(report.unexpected_targets)),
       ("duplicate_targets", @json.to_json(report.duplicate_targets)),
       ("differences", @json.to_json(report.differences)),
+      ("suppressed_differences", @json.to_json(report.suppressed_differences)),
     ]),
   ).stringify()
 }
@@ -61,6 +62,19 @@ pub fn report_to_markdown(report : ParityReport) -> String {
     output += "Duplicate targets: " +
       report.duplicate_targets.join(", ") +
       "\n\n"
+  }
+  if report.suppressed_differences.length() > 0 {
+    output += "Policy-tolerated differences:\n"
+    for item in report.suppressed_differences {
+      output += "- `" +
+        item.target +
+        "` " +
+        item.reason +
+        " at `" +
+        item.path +
+        "`\n"
+    }
+    output += "\n"
   }
   if report.differences.length() > 0 {
     output += "| Target | Check | Field | JSON path | Reference | Observed |\n"
@@ -165,6 +179,19 @@ pub fn suite_report_to_html(report : SuiteReport) -> String {
       output += "<ul>"
       for diagnostic in item.diagnostics {
         output += "<li>" + escape_html(diagnostic) + "</li>"
+      }
+      output += "</ul>"
+    }
+    if item.suppressed_differences.length() > 0 {
+      output += "<p>Policy-tolerated differences:</p><ul>"
+      for suppressed in item.suppressed_differences {
+        output += "<li><code>" +
+          escape_html(suppressed.target) +
+          "</code> " +
+          escape_html(suppressed.reason) +
+          " at <code>" +
+          escape_html(suppressed.path) +
+          "</code></li>"
       }
       output += "</ul>"
     }

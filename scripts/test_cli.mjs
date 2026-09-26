@@ -12,6 +12,8 @@ const base = {
     compare_stdout_as_json: false,
     strip_ansi_sgr: false,
     trim_trailing_whitespace_per_line: false,
+    absolute_number_tolerance: 0,
+    ignored_json_pointers: [],
   },
 };
 
@@ -63,6 +65,22 @@ if (malformed.status !== 2 || !malformed.stdout.includes("invalid scenario JSON"
 }
 
 console.log("PASS: CLI pass/divergent/inconclusive/malformed-input paths");
+
+const legacyPolicy = {...base.policy};
+delete legacyPolicy.absolute_number_tolerance;
+delete legacyPolicy.ignored_json_pointers;
+const legacy = run({
+  ...base,
+  policy: legacyPolicy,
+  observations: [
+    {target: "js", exit_code: 0, stdout: "ok\n", stderr: ""},
+    {target: "wasm", exit_code: 0, stdout: "ok\n", stderr: ""},
+  ],
+});
+if (legacy.status !== 0 || JSON.parse(legacy.stdout).status !== "pass") {
+  throw new Error(`Expected old schema-v1 policy to remain valid; got ${legacy.status}: ${legacy.stdout}${legacy.stderr}`);
+}
+console.log("PASS: older schema-v1 policy defaults new fields strictly");
 
 const fileFixture = spawnSync(
   "node",

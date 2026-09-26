@@ -23,10 +23,72 @@ pub(all) struct ComparePolicy {
   compare_stdout_as_json : Bool
   strip_ansi_sgr : Bool
   trim_trailing_whitespace_per_line : Bool
-} derive(ToJson, FromJson)
+  absolute_number_tolerance : Double
+  ignored_json_pointers : Array[String]
+} derive(ToJson)
 
 ///|
 pub extend ComparePolicy with ToJson::{to_json}
+
+///|
+fn[T : @json.FromJson] json_object_field(
+  fields : Map[String, Json],
+  key : String,
+  path : @json.JsonPath,
+) -> T raise @json.JsonDecodeError {
+  match fields.get(key) {
+    Some(value) => @json.from_json(value, path=path.add_key(key))
+    None =>
+      raise @json.JsonDecodeError((path.add_key(key), "missing required field"))
+  }
+}
+
+///|
+fn[T : @json.FromJson] json_object_field_or(
+  fields : Map[String, Json],
+  key : String,
+  path : @json.JsonPath,
+  fallback : T,
+) -> T raise @json.JsonDecodeError {
+  match fields.get(key) {
+    Some(value) => @json.from_json(value, path=path.add_key(key))
+    None => fallback
+  }
+}
+
+///|
+pub impl @json.FromJson for ComparePolicy with fn from_json(json, path) {
+  guard json is Json::Object(fields) else {
+    raise @json.JsonDecodeError(
+      (path, "ComparePolicy::from_json: expected object"),
+    )
+  }
+  {
+    normalize_line_endings: json_object_field(
+      fields, "normalize_line_endings", path,
+    ),
+    trim_one_final_newline: json_object_field(
+      fields, "trim_one_final_newline", path,
+    ),
+    compare_stderr: json_object_field(fields, "compare_stderr", path),
+    compare_stdout_as_json: json_object_field(
+      fields, "compare_stdout_as_json", path,
+    ),
+    strip_ansi_sgr: json_object_field(fields, "strip_ansi_sgr", path),
+    trim_trailing_whitespace_per_line: json_object_field(
+      fields, "trim_trailing_whitespace_per_line", path,
+    ),
+    absolute_number_tolerance: json_object_field_or(
+      fields, "absolute_number_tolerance", path, 0.0,
+    ),
+    ignored_json_pointers: json_object_field_or(
+      fields,
+      "ignored_json_pointers",
+      path,
+      [],
+    ),
+  }
+}
 
 ///|
 pub extend ComparePolicy with @json.FromJson::{from_json}
@@ -40,6 +102,8 @@ pub fn ComparePolicy::strict() -> ComparePolicy {
     compare_stdout_as_json: false,
     strip_ansi_sgr: false,
     trim_trailing_whitespace_per_line: false,
+    absolute_number_tolerance: 0.0,
+    ignored_json_pointers: [],
   }
 }
 
@@ -106,7 +170,19 @@ pub(all) struct ParityReport {
   unexpected_targets : Array[String]
   duplicate_targets : Array[String]
   differences : Array[FieldDifference]
+  suppressed_differences : Array[SuppressedDifference]
 }
+
+///|
+/// A comparison omitted by an explicit policy rule or numeric tolerance.
+pub(all) struct SuppressedDifference {
+  target : String
+  path : String
+  reason : String
+} derive(ToJson)
+
+///|
+pub extend SuppressedDifference with ToJson::{to_json}
 
 ///|
 pub(all) struct SuiteReport {

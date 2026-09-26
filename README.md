@@ -20,7 +20,7 @@ MoonBit 项目可以面向多个编译后端。`moon test --target all` 能在�
 node scripts/check_backends.mjs
 ```
 
-脚本会分别运行同一份 MoonBit 探针：
+脚本按矩阵配置运行同一个基础探针及六组可复用 MoonBit 场景：整数溢出/除法、Unicode/UTF-8、排序数组与 Map、嵌套 JSON 往返、Result/Option 分支、浮点误差。
 
 ```sh
 moon run --target wasm cmd/probe
@@ -101,7 +101,7 @@ println(@parity.report_to_markdown(report))
 安装已发布版本：
 
 ```sh
-moon add zhangbowen2006/moonbit-target-parity@0.3.0
+moon add zhangbowen2006/moonbit-target-parity@0.5.0
 ```
 
 调用方的 `moon.pkg` 中导入：
@@ -127,17 +127,19 @@ node scripts/check_backends.mjs
 - 默认把 `CRLF`/`CR` 统一为 `LF`；是否删除一个末尾换行由 `trim_one_final_newline` 明确控制。
 - `compare_stderr` 默认开启；跨后端运行器自身日志可能混在 stderr 时，可对该场景显式关闭。退出码和 stdout 仍然比较。
 - `compare_stdout_as_json` 开启后，合法 JSON stdout 按 JSON 结构比较：对象成员顺序不重要，数组顺序仍重要；差异报告包含转义过的 JSON Pointer 路径。JSON 无法解析时回退到文本精确比较；该选项不会替代 JSON 格式有效性测试。
+- `ignored_json_pointers` 只在 JSON 模式中忽略列出的路径及其子树；`absolute_number_tolerance` 只容忍该绝对误差内的 JSON 数值差异。两类被抑制差异仍会写入报告，避免静默吞掉规则效果。旧的 schema v1 输入可以省略这两个字段，默认使用严格策略：零数值容差且不忽略路径。
 - `strip_ansi_sgr` 和 `trim_trailing_whitespace_per_line` 默认关闭；确认颜色控制码或行尾空格只是噪声时才开启。
 - stdout/stderr 文本差异的 Markdown 报告附带 unified diff；LCS 表超过 1,000,000 行对时输出资源上限摘要。
 - 第一个实际出现的 `expected_targets` 作为参考目标，目标顺序由调用者声明并写入报告。
 - 已观察到跨目标差异或预期结果回归时返回 `divergent`。没有差异但缺少、重复或多出目标，或者声明不足两个目标时返回 `inconclusive`。
 - 一个场景可报告字段 `exit_code`、`stdout`、`stderr` 差异；套件 API 可聚合多个场景。
+- `examples/portable/` 提供可扩充的 MoonBit 多后端语义探针与断言，涵盖多类 core 用法。
 
 CLI/CI 状态码：`0` 通过、`1` 已确认差异、`2` 输入错误或证据不完整。
 
 ## 边界
 
-库只比较调用方提供的文本结果，不启动隔离沙箱、不生成测试输入、不判定程序业务是否正确，也不能证明没列出的输入行为一致。二进制 stdout 暂不支持；调用方可先提供稳定编码或摘要。比较 JSON 时，对象字段顺序可忽略，但浮点容差、字段忽略规则和通用字符串遮罩暂不支持。
+库只比较调用方提供的文本结果，不启动隔离沙箱、不生成测试输入、不判定程序业务是否正确，也不能证明没列出的输入行为一致。二进制 stdout 暂不支持；调用方可先提供稳定编码或摘要。JSON 比较支持绝对数字误差和 JSON Pointer 路径排除；不支持正则字符串遮罩、相对浮点误差或任意对象成员顺序规则。
 
 ## 验证与 CI
 

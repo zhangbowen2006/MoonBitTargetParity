@@ -11,7 +11,7 @@
 
 name = "zhangbowen2006/moonbit-target-parity"
 
-version = "0.3.0"
+version = "0.5.0"
 
 readme = "README.md"
 

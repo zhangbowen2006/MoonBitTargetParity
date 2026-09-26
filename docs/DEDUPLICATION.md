@@ -9,6 +9,8 @@
 | MoonJust 等针对其他程序的差分验证 | 对各自实现与官方工具进行兼容性对照 | 被比较对象和契约不同；MoonBit Target Parity 比较 MoonBit 同一实现跨编译后端的运行观察 |
 | 上游 `moon` 的 related test/bench 讨论 | 讨论根据依赖图选择受改动影响的测试 | 与本项目的运行输出跨后端等价判定不是同一功能，本项目不实现受影响测试选择 |
 
+当前 `examples/portable/` 中的六个 package 是项目自有的最小可运行语义探针，不复制第三方实现；分别覆盖数值、Unicode/UTF-8、集合、JSON、错误/Option 和浮点用法，用来演示同一行为合同如何跨目标执行。
+
 来源：
 
 - [Moon 命令文档](https://docs.moonbitlang.com/en/latest/toolchain/moon/commands.html)

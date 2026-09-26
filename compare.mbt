@@ -90,6 +90,7 @@ pub fn compare_scenario(run : ScenarioRun) -> ParityReport {
   let seen_expected : Array[String] = []
   let compared_targets : Array[String] = []
   let differences : Array[FieldDifference] = []
+  let suppressed_differences : Array[SuppressedDifference] = []
   let seen_observations : Array[String] = []
   let mut reference : Observation? = None
 
@@ -101,6 +102,17 @@ pub fn compare_scenario(run : ScenarioRun) -> ParityReport {
   }
   if run.expected_targets.length() < 2 {
     diagnostics.push("at least two expected targets are required")
+  }
+  if run.policy.absolute_number_tolerance < 0.0 ||
+    (run.policy.absolute_number_tolerance * 0.0).is_nan() {
+    diagnostics.push(
+      "absolute_number_tolerance must be finite and non-negative",
+    )
+  }
+  for pointer in run.policy.ignored_json_pointers {
+    if !is_valid_json_pointer(pointer) {
+      diagnostics.push("invalid ignored JSON Pointer: " + pointer)
+    }
   }
 
   for expected in run.expected_targets {
@@ -158,6 +170,7 @@ pub fn compare_scenario(run : ScenarioRun) -> ParityReport {
                 observation,
                 run.policy,
                 differences,
+                suppressed_differences,
                 "parity",
               )
               break
@@ -187,7 +200,28 @@ pub fn compare_scenario(run : ScenarioRun) -> ParityReport {
     unexpected_targets,
     duplicate_targets,
     differences,
+    suppressed_differences,
   }
+}
+
+///|
+fn is_valid_json_pointer(pointer : String) -> Bool {
+  if pointer != "" && !pointer.has_prefix("/") {
+    return false
+  }
+  let characters = pointer.to_array()
+  let mut i = 0
+  while i < characters.length() {
+    if characters[i] == '~' {
+      if i + 1 >= characters.length() ||
+        (characters[i + 1] != '0' && characters[i + 1] != '1') {
+        return false
+      }
+      i += 1
+    }
+    i += 1
+  }
+  true
 }
 
 ///|
@@ -206,6 +240,7 @@ fn compare_observation_fields(
   observed : Observation,
   policy : ComparePolicy,
   differences : Array[FieldDifference],
+  suppressed_differences : Array[SuppressedDifference],
   kind : String,
 ) -> Unit {
   if reference.exit_code != observed.exit_code {
@@ -230,9 +265,11 @@ fn compare_observation_fields(
             observed_json,
             observed.target,
             kind,
+            policy,
             "",
             0,
             differences,
+            suppressed_differences,
           )
         }
       _ =>
@@ -287,12 +324,45 @@ fn collect_json_differences(
   observed : Json,
   target : String,
   kind : String,
+  policy : ComparePolicy,
   path : String,
   depth : Int,
   differences : Array[FieldDifference],
+  suppressed_differences : Array[SuppressedDifference],
 ) -> Unit {
   if reference.equal(observed) {
     return
+  }
+  match matching_ignored_pointer(path, policy.ignored_json_pointers) {
+    Some(ignored_path) => {
+      suppressed_differences.push({
+        target,
+        path: if ignored_path == "" {
+          "/"
+        } else {
+          ignored_path
+        },
+        reason: "matched ignored JSON Pointer",
+      })
+      return
+    }
+    None => ()
+  }
+  match (reference, observed) {
+    (Json::Number(left, ..), Json::Number(right, ..)) =>
+      if (left - right).abs() <= policy.absolute_number_tolerance {
+        suppressed_differences.push({
+          target,
+          path: if path == "" {
+            "/"
+          } else {
+            path
+          },
+          reason: "within absolute number tolerance",
+        })
+        return
+      }
+    _ => ()
   }
   if depth >= 64 {
     differences.push({
@@ -323,9 +393,11 @@ fn collect_json_differences(
               observed_value,
               target,
               kind,
+              policy,
               child_path,
               depth + 1,
               differences,
+              suppressed_differences,
             )
           (Some(reference_value), None) =>
             push_json_difference(
@@ -334,7 +406,9 @@ fn collect_json_differences(
               child_path,
               reference_value,
               Json::string("<missing>"),
+              policy,
               differences,
+              suppressed_differences,
             )
           (None, Some(observed_value)) =>
             push_json_difference(
@@ -343,7 +417,9 @@ fn collect_json_differences(
               child_path,
               Json::string("<missing>"),
               observed_value,
+              policy,
               differences,
+              suppressed_differences,
             )
           (None, None) => ()
         }
@@ -362,25 +438,45 @@ fn collect_json_differences(
           observed_array[index],
           target,
           kind,
+          policy,
           path + "/" + index.to_string(),
           depth + 1,
           differences,
+          suppressed_differences,
         )
         index += 1
       }
-      if reference_array.length() != observed_array.length() {
-        differences.push({
+      while index < reference_array.length() {
+        push_json_difference(
           target,
           kind,
-          field: "stdout_json",
-          path: Some(path + "/length"),
-          reference: reference_array.length().to_string(),
-          observed: observed_array.length().to_string(),
-        })
+          path + "/" + index.to_string(),
+          reference_array[index],
+          Json::string("<missing>"),
+          policy,
+          differences,
+          suppressed_differences,
+        )
+        index += 1
+      }
+      while index < observed_array.length() {
+        push_json_difference(
+          target,
+          kind,
+          path + "/" + index.to_string(),
+          Json::string("<missing>"),
+          observed_array[index],
+          policy,
+          differences,
+          suppressed_differences,
+        )
+        index += 1
       }
     }
     _ =>
-      push_json_difference(target, kind, path, reference, observed, differences)
+      push_json_difference(
+        target, kind, path, reference, observed, policy, differences, suppressed_differences,
+      )
   }
 }
 
@@ -391,21 +487,46 @@ fn push_json_difference(
   path : String,
   reference : Json,
   observed : Json,
+  policy : ComparePolicy,
   differences : Array[FieldDifference],
+  suppressed_differences : Array[SuppressedDifference],
 ) -> Unit {
-  differences.push({
-    target,
-    kind,
-    field: "stdout_json",
-    path: Some(if path == "" { "/" } else { path }),
-    reference: reference.stringify(),
-    observed: observed.stringify(),
-  })
+  match matching_ignored_pointer(path, policy.ignored_json_pointers) {
+    Some(ignored_path) =>
+      suppressed_differences.push({
+        target,
+        path: if ignored_path == "" {
+          "/"
+        } else {
+          ignored_path
+        },
+        reason: "matched ignored JSON Pointer",
+      })
+    None =>
+      differences.push({
+        target,
+        kind,
+        field: "stdout_json",
+        path: Some(if path == "" { "/" } else { path }),
+        reference: reference.stringify(),
+        observed: observed.stringify(),
+      })
+  }
 }
 
 ///|
 fn escape_json_pointer_segment(segment : String) -> String {
   segment.replace_all(old="~", new="~0").replace_all(old="/", new="~1")
+}
+
+///|
+fn matching_ignored_pointer(path : String, pointers : Array[String]) -> String? {
+  for pointer in pointers {
+    if pointer == "" || path == pointer || path.has_prefix(pointer + "/") {
+      return Some(pointer)
+    }
+  }
+  None
 }
 
 ///|
@@ -424,6 +545,7 @@ pub fn compare_contract_scenario(contract : ContractScenario) -> ParityReport {
     return base
   }
   let differences = base.differences.copy()
+  let suppressed_differences = base.suppressed_differences.copy()
   let diagnostics = base.diagnostics.copy()
   let seen_expectations : Array[String] = []
   for expectation in contract.expectations {
@@ -445,6 +567,7 @@ pub fn compare_contract_scenario(contract : ContractScenario) -> ParityReport {
             actual,
             run.policy,
             differences,
+            suppressed_differences,
             "expected-result",
           )
         None => ()
@@ -473,6 +596,7 @@ pub fn compare_contract_scenario(contract : ContractScenario) -> ParityReport {
     unexpected_targets: base.unexpected_targets,
     duplicate_targets: base.duplicate_targets,
     differences,
+    suppressed_differences,
   }
 }
 

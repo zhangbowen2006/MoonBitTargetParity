@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.5.0 — 2026-09-26
+
+- Added a six-package portable behavior corpus for arithmetic, Unicode/UTF-8,
+  collections, JSON, Result/Option, and floating point.
+- Extended the matrix runner to select a package per scenario and expand a
+  shared expected result to each explicitly declared target.
+- Applied JSON Pointer exclusions to both value and structural differences,
+  including added/removed object members and array elements.
+- Kept earlier schema-v1 JSON inputs compatible: omitted new policy fields
+  default to zero tolerance and no ignored paths.
+
+## 0.4.0 — 2026-09-25
+
+- Added JSON Pointer subtree exclusions and absolute numeric tolerances.
+- Reports now record each policy-suppressed difference so exceptions remain
+  reviewable.
+- Added tests for invalid pointer policies, negative tolerances, accepted JSON
+  drift rules, and structural-difference exclusions.
+
 ## 0.3.0 — 2026-09-24
 
 - Added opt-in ANSI SGR stripping and per-line trailing whitespace trimming.
