@@ -1,5 +1,11 @@
 # 测试记录
 
+2026-09-29 补丁版 `0.5.1` 对应的
+[Actions run 36560754312](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/36560754312)
+已在四目标完整通过；`moon package --list --frozen` 与
+`moon publish --frozen` 成功后，公开 manifest 显示 `0.5.1` 为
+`build_status=success`、`has_package=true`、`yanked=false`。
+
 2026-09-29 补充套件场景名唯一性检查后，本地隔离 MoonBit 0.10.14：
 `moon info`、`moon fmt`、`moon fmt --check`、`moon check --target all --deny-warn`、
 `moon build`、`moon test --deny-warn`、`moon test --target js --deny-warn`、

@@ -11,6 +11,25 @@
 4. 等待对应提交的 GitHub Actions 成功后再正式发布。
 5. `moon publish --frozen` 成功后重新查询公开 manifest，记录版本、构建状态、包可用性与页面链接。
 
+## 0.5.1 套件唯一性修复
+
+2026-09-29，提交 `78df61ef9447eeb51b0490b84b06b2738fbab569` 的
+[Actions run 36560754312](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/36560754312)
+完成严格检查、四目标构建/测试、格式、接口快照、CLI、公开 API 示例、真实矩阵及包检查，结果为 `completed/success`。
+随后本地执行 `moon package --list --frozen`，确认清单后执行
+`moon publish --frozen`；命令退出码为 0，服务器返回 `200 OK`。
+公开 manifest 再核验为：
+
+- 最新版本：`0.5.1`
+- `build_status=success`
+- `has_package=true`，`yanked=false`
+- checksum：`e66feddd9fbf3c46a873b8985db3f1b9c613e0aaf6675c3c771ec54d2b909aa1`
+
+发布源码已标记为 [v0.5.1](https://github.com/zhangbowen2006/MoonBitTargetParity/tree/v0.5.1)，标签指向上述通过 CI 的提交。
+
+页面：[Mooncakes 文档](https://mooncakes.io/docs/zhangbowen2006/moonbit-target-parity)；
+接口：[manifest](https://mooncakes.io/api/v0/manifest/zhangbowen2006/moonbit-target-parity)。
+
 ## 0.1.0 发布记录
 
 2026-09-24，在提交 `6e863bff95b0a6ee35ec5f5f4302e07aee180727` 的

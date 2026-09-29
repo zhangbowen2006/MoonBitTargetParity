@@ -101,10 +101,10 @@ println(@parity.report_to_markdown(report))
 
 基线非空时必须为每个声明目标提供一条 expectation；少目标返回 `inconclusive`，结果不符返回 `divergent`，差异会标记为 `expected-result`。留空 expectations 才是 parity-only 模式。
 
-安装已核验发布的 `0.5.0`：
+安装已核验发布的 `0.5.1`：
 
 ```sh
-moon add zhangbowen2006/moonbit-target-parity@0.5.0
+moon add zhangbowen2006/moonbit-target-parity@0.5.1
 ```
 
 调用方的 `moon.pkg` 中导入：
@@ -149,7 +149,7 @@ moon run examples/contract-demo
 
 CLI/CI 状态码：`0` 通过、`1` 已确认差异、`2` 输入错误或证据不完整。
 
-`0.5.1` 源码增加了套件场景名唯一性检查：重复名字会标为 `inconclusive` 并逐项给出诊断；若其中已有实际差异，`divergent` 仍优先。Mooncakes `0.5.0` 不包含此修复。安装 `0.5.1` 前请先在包页核对该版本已经正式发布。
+`0.5.1` 增加了套件场景名唯一性检查：重复名字会标为 `inconclusive` 并逐项给出诊断；若其中已有实际差异，`divergent` 仍优先。Mooncakes `0.5.0` 不包含此修复。
 
 ## 边界
 
