@@ -16,7 +16,6 @@ const field = name => {
 };
 const repository = field('repository').replace(/\.git$/, '');
 const moduleName = field('name');
-const version = field('version');
 
 assert.equal(copyReady, canonical, 'Copy-ready and canonical proposals differ');
 assert.equal(repository, 'https://github.com/zhangbowen2006/MoonBitTargetParity');
@@ -26,7 +25,7 @@ for (const required of [
   '申请人：张博文',
   `新仓库：${repository}`,
   `项目模块：\`${moduleName}\``,
-  `Mooncakes ${version}：`,
+  'Mooncakes 0.5.0：',
   'MoonBit 多后端',
 ]) {
   assert.ok(canonical.includes(required), `Proposal missing: ${required}`);

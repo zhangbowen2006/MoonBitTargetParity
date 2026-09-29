@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.5.1 — 2026-09-29
+
 - Reject duplicate scenario names in suites as incomplete evidence while retaining any observed divergence; add regression tests.
 - Added a tracked copy-ready September proposal and CI identity check to keep
   the new MoonBit multi-backend topic separate from the rejected shortcut topic.
