@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Enforce the acceptance minimum of moonc 0.10.14 in CI and document the reproducible toolchain prerequisite.
 ## 0.5.1 — 2026-09-29
 
 - Reject duplicate scenario names in suites as incomplete evidence while retaining any observed divergence; add regression tests.

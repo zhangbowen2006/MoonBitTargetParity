@@ -17,7 +17,7 @@ MoonBit 项目可以面向多个编译后端。`moon test --target all` 能在�
 
 ## 真实跨目标示例
 
-安装 MoonBit 和 Node.js 后，在仓库根目录运行：
+安装 MoonBit（`moonc >= 0.10.14`）和 Node.js 后，在仓库根目录运行。可先用 `moon version --all` 或 `node scripts/check_toolchain.mjs` 核对编译器版本：
 
 ```sh
 node scripts/check_backends.mjs

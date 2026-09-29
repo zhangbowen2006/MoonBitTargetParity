@@ -30,6 +30,9 @@ jobs:
       - name: Show toolchain
         run: moon version --all
 
+      - name: Require supported moonc version
+        run: node scripts/check_toolchain.mjs
+
       - name: Resolve dependencies
         run: moon update
 
