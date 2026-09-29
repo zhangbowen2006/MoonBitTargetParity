@@ -123,6 +123,15 @@ node scripts/test_cli.mjs
 node scripts/check_backends.mjs
 ```
 
+仓库还提供只依赖公开 MoonBit API 的直接调用示例：
+
+```sh
+moon run examples/contract-demo
+```
+
+它依次输出通过、所有后端共同偏离已审核预期、缺少目标结果三种 JSON 报告。
+这些是手写演示输入；上文的 `check_backends.mjs` 才会实际执行后端程序。
+
 
 ## 比较规则
 
@@ -162,6 +171,7 @@ moon package --list
 ## 项目资料
 
 - [一页申报书](docs/PROJECT_PROPOSAL.md)
+- [公开 API 可运行示例](examples/contract-demo/main.mbt)
 - [技术设计与边界](docs/ARCHITECTURE.md)
 - [已有方案与相似项目核对](docs/DEDUPLICATION.md)
 - [真实测试记录](docs/TESTING.md)

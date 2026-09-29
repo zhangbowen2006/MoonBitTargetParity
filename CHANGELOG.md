@@ -4,6 +4,10 @@
 
 - Added a tracked copy-ready September proposal and CI identity check to keep
   the new MoonBit multi-backend topic separate from the rejected shortcut topic.
+- Added a directly runnable MoonBit public-API consumer example covering pass,
+  shared regression and incomplete target evidence.
+- Corrected the architecture boundary for already implemented JSON Pointer
+  exclusions and absolute numeric tolerance.
 
 ## 0.5.0 — 2026-09-26
 

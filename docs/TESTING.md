@@ -1,5 +1,12 @@
 # 测试记录
 
+2026-09-29 新增公开 API 直接调用示例后，本地 MoonBit 0.10.14：
+`moon check --deny-warn`、`moon test --deny-warn`（30/30）、`moon info`、
+`moon fmt --check` 均通过；`moon run examples/contract-demo` 在 wasm、js、
+wasm-gc 目标均输出预期的 pass/divergent/inconclusive 三份报告。
+生成接口无意外变更，`moon package --list` 包含示例；四目标远程 CI
+仍需在新提交推送后核对，不能用此前版本的结果替代。
+
 2026-09-29 申报材料同步复验：`node scripts/verify_submission.mjs` 通过；
 隔离 MoonBit 0.10.14 下 `moon check --deny-warn`、`moon build`、
 `moon test --deny-warn`（29/29）、`moon info`、`moon fmt` 与

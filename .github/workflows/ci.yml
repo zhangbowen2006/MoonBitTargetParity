@@ -53,6 +53,9 @@ jobs:
       - name: CLI regression cases
         run: node scripts/test_cli.mjs
 
+      - name: Public MoonBit API example
+        run: moon run examples/contract-demo
+
       - name: Live cross-target result comparison
         run: node scripts/check_backends.mjs
 

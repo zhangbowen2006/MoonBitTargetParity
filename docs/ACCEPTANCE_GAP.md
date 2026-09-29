@@ -7,7 +7,7 @@
 | 新选题申报书与仓库一致 | `submission/MoonBitTargetParity_9月黑客松申报书_报名版.md` 与 `docs/PROJECT_PROPOSAL.md` 完全一致；CI 新增模块名、仓库和主题身份检查 | 本地已通过；还需推送并核查新 CI，报名表也必须改用新项目 |
 | 直接服务 MoonBit 生态 | 面向 MoonBit 多后端包的可复用结果契约 API；项目主体和核心实现均为 MoonBit | 需让评审确认“开发工具/库”回应生态应用要求 |
 | 实际需求与独立价值 | 官方提供多目标测试；本项目聚焦同一场景跨后端可观察输出的契约比较 | 没有外部 adopter；不宣称上游背书或绝对首创 |
-| 功能真实可运行 | 本地 wasm/wasm-gc/js 七场景探针对照通过；核心库与 portable packages 共 29 项测试；[Actions 36220634863](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/36220634863) 对本版本四目标及真实矩阵验证成功 | 本机 native 缺 C 编译器；本机不宣称 native 通过 |
+| 功能真实可运行 | 本地 wasm/wasm-gc/js 七场景探针对照通过；新增纯 MoonBit API 示例，当前 30 项测试通过；[Actions 36220634863](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/36220634863) 对 0.5.0 的四目标及真实矩阵验证成功 | 本机 native 缺 C 编译器；新增示例的远程 CI 尚待核对 |
 | MoonBit 主体 | 比较、归一化、suite 聚合和报告由 MoonBit 实现；Node 只负责运行外部矩阵 | 完成源文件占比核对和公开版本测试 |
 | 代码规模 | 约 1,490 行非测试 MoonBit 实现；含示例和测试的 `.mbt` 共 2,129 行 | 仍低于此前提出的 4,000 行目标；不通过复制、生成或无意义拆分凑数，需继续增加有真实用户价值的核心能力 |
 | README/示例/API | 中文 README、JSON fixture、真实跨目标脚本及公共 API | 已有材料需随新仓库一起公开 |
