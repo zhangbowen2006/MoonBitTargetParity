@@ -6,7 +6,10 @@
 `moon test --target wasm-gc --deny-warn`、CLI 回归、申报书身份检查及
 `moon package --list --frozen` 均通过。三个实际运行的测试目标分别为
 32/32；`moon build --target all` 和 `moon test --target all` 因本机缺少
-C 编译器，不能作为 native 通过的证据。新增行为还需等待新提交的远程 CI。
+C 编译器，不能作为 native 通过的证据。新修复对应的
+[Actions run 36560171016](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/36560171016)
+已在 Ubuntu 完成四目标检查、构建、测试、格式、CLI、示例、真实矩阵与包检查，
+最终状态 `completed/success`；提交为 `9f08583`。
 
 2026-09-29 公开提交 `974e9f1` 的
 [Actions run 36559411781](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/36559411781)
