@@ -1,5 +1,12 @@
 # 测试记录
 
+2026-09-29 申报材料同步复验：`node scripts/verify_submission.mjs` 通过；
+隔离 MoonBit 0.10.14 下 `moon check --deny-warn`、`moon build`、
+`moon test --deny-warn`（29/29）、`moon info`、`moon fmt` 与
+`moon fmt --check` 通过；CLI 回归通过，本机 wasm/wasm-gc/js 的七场景矩阵
+7/7 通过；`moon package --list` 包含新申报书及身份检查脚本。
+本次变动尚未推送，不能用旧 CI 代表新提交；本机 native 仍未运行。
+
 本机复核：2026-09-26，隔离安装的 MoonBit 0.10.14（Windows）。下表是 0.5.0 工作树的实际结果；其中 `native` 目标依赖的 C 编译器未安装，因此本机不报告 native 通过。
 
 ## 本机 Windows 复验

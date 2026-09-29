@@ -4,6 +4,7 @@
 
 | 要求/反馈 | 当前证据 | 风险与下一步 |
 | --- | --- | --- |
+| 新选题申报书与仓库一致 | `submission/MoonBitTargetParity_9月黑客松申报书_报名版.md` 与 `docs/PROJECT_PROPOSAL.md` 完全一致；CI 新增模块名、仓库和主题身份检查 | 本地已通过；还需推送并核查新 CI，报名表也必须改用新项目 |
 | 直接服务 MoonBit 生态 | 面向 MoonBit 多后端包的可复用结果契约 API；项目主体和核心实现均为 MoonBit | 需让评审确认“开发工具/库”回应生态应用要求 |
 | 实际需求与独立价值 | 官方提供多目标测试；本项目聚焦同一场景跨后端可观察输出的契约比较 | 没有外部 adopter；不宣称上游背书或绝对首创 |
 | 功能真实可运行 | 本地 wasm/wasm-gc/js 七场景探针对照通过；核心库与 portable packages 共 29 项测试；[Actions 36220634863](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/36220634863) 对本版本四目标及真实矩阵验证成功 | 本机 native 缺 C 编译器；本机不宣称 native 通过 |

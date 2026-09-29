@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Added a tracked copy-ready September proposal and CI identity check to keep
+  the new MoonBit multi-backend topic separate from the rejected shortcut topic.
+
 ## 0.5.0 — 2026-09-26
 
 - Added a six-package portable behavior corpus for arithmetic, Unicode/UTF-8,

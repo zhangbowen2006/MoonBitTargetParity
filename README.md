@@ -6,6 +6,9 @@
 
 公开仓库：[zhangbowen2006/MoonBitTargetParity](https://github.com/zhangbowen2006/MoonBitTargetParity) · [GitHub Actions](https://github.com/zhangbowen2006/MoonBitTargetParity/actions) · [Mooncakes 包页](https://mooncakes.io/docs/zhangbowen2006/moonbit-target-parity)
 
+九月报名使用[本项目的独立申报书](submission/MoonBitTargetParity_9月黑客松申报书_报名版.md)；
+CI 会核对项目名称、仓库、模块和两份申报书一致。
+
 ## 为什么做这个
 
 MoonBit 项目可以面向多个编译后端。`moon test --target all` 能在多个目标上运行项目自己的断言；MoonBit Target Parity 补充的是同一组输入和场景下，对程序可观察结果进行跨目标对照，适合序列化器、协议解析器、数值库、命令行工具和其他需要保持输出一致的库。
