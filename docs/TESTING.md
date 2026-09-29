@@ -1,11 +1,24 @@
 # 测试记录
 
+2026-09-29 补充套件场景名唯一性检查后，本地隔离 MoonBit 0.10.14：
+`moon info`、`moon fmt`、`moon fmt --check`、`moon check --target all --deny-warn`、
+`moon build`、`moon test --deny-warn`、`moon test --target js --deny-warn`、
+`moon test --target wasm-gc --deny-warn`、CLI 回归、申报书身份检查及
+`moon package --list --frozen` 均通过。三个实际运行的测试目标分别为
+32/32；`moon build --target all` 和 `moon test --target all` 因本机缺少
+C 编译器，不能作为 native 通过的证据。新增行为还需等待新提交的远程 CI。
+
+2026-09-29 公开提交 `974e9f1` 的
+[Actions run 36559411781](https://github.com/zhangbowen2006/MoonBitTargetParity/actions/runs/36559411781)
+已成功，包括四目标构建、测试、真实矩阵和公开 API 示例。此记录只证明该提交，
+不代表其后本地未推送的改进已通过远程 CI。
+
 2026-09-29 新增公开 API 直接调用示例后，本地 MoonBit 0.10.14：
 `moon check --deny-warn`、`moon test --deny-warn`（30/30）、`moon info`、
 `moon fmt --check` 均通过；`moon run examples/contract-demo` 在 wasm、js、
 wasm-gc 目标均输出预期的 pass/divergent/inconclusive 三份报告。
-生成接口无意外变更，`moon package --list` 包含示例；四目标远程 CI
-仍需在新提交推送后核对，不能用此前版本的结果替代。
+生成接口无意外变更，`moon package --list` 包含示例；对应的四目标远程 CI
+结果见上方 `974e9f1` 记录。
 
 2026-09-29 申报材料同步复验：`node scripts/verify_submission.mjs` 通过；
 隔离 MoonBit 0.10.14 下 `moon check --deny-warn`、`moon build`、

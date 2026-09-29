@@ -251,6 +251,64 @@ test "suite aggregates independent scenarios without hiding divergence" {
 }
 
 ///|
+test "duplicate suite scenario names cannot silently pass" {
+  let run : @moonbit-target-parity.ScenarioRun = {
+    schema_version: 1,
+    name: "same-name",
+    expected_targets: ["wasm", "js"],
+    observations: [
+      { target: "wasm", exit_code: 0, stdout: "ok", stderr: "", },
+      { target: "js", exit_code: 0, stdout: "ok", stderr: "", },
+    ],
+    policy: @moonbit-target-parity.ComparePolicy::strict(),
+  }
+  let suite = @moonbit-target-parity.compare_suite([run, run])
+  assert_true(suite.status is @moonbit-target-parity.Status::Inconclusive)
+  assert_eq(suite.passed, 0)
+  assert_eq(suite.inconclusive, 2)
+  assert_eq(@moonbit-target-parity.suite_report_exit_code(suite), 2)
+  for report in suite.reports {
+    assert_true(
+      report.diagnostics.contains("duplicate scenario name in suite: same-name"),
+    )
+  }
+  assert_true(
+    @moonbit-target-parity.suite_report_to_json(suite).contains(
+      "duplicate scenario name in suite: same-name",
+    ),
+  )
+}
+
+///|
+test "duplicate suite names do not hide a real divergence" {
+  let passing : @moonbit-target-parity.ScenarioRun = {
+    schema_version: 1,
+    name: "same-name",
+    expected_targets: ["wasm", "js"],
+    observations: [
+      { target: "wasm", exit_code: 0, stdout: "ok", stderr: "", },
+      { target: "js", exit_code: 0, stdout: "ok", stderr: "", },
+    ],
+    policy: @moonbit-target-parity.ComparePolicy::strict(),
+  }
+  let divergent : @moonbit-target-parity.ScenarioRun = {
+    schema_version: 1,
+    name: "same-name",
+    expected_targets: ["wasm", "js"],
+    observations: [
+      { target: "wasm", exit_code: 0, stdout: "ok", stderr: "", },
+      { target: "js", exit_code: 0, stdout: "changed", stderr: "", },
+    ],
+    policy: @moonbit-target-parity.ComparePolicy::strict(),
+  }
+  let suite = @moonbit-target-parity.compare_suite([passing, divergent])
+  assert_true(suite.status is @moonbit-target-parity.Status::Divergent)
+  assert_eq(suite.divergent, 1)
+  assert_eq(suite.inconclusive, 1)
+  assert_eq(@moonbit-target-parity.suite_report_exit_code(suite), 1)
+}
+
+///|
 test "invalid schema, empty scenario, and one-target contract are inconclusive" {
   let report = @moonbit-target-parity.compare_scenario({
     schema_version: 9,

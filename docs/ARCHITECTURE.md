@@ -20,6 +20,7 @@
 - JSON Pointer 排除和绝对数字容差是显式策略；每个被抑制的差异都会列入 `suppressed_differences`，调用者可以审阅排除规则是否过宽。
 - stderr 比较是策略项，适合屏蔽运行器自身日志；关闭时不会关闭 stdout 或退出码检查。
 - 缺失、重复、未声明目标、空场景名、错误 schema 版本和少于两个目标会阻止 pass。已观察到差异优先报告 divergent。
+- 套件聚合还检查场景名唯一性；重复名字对应的报告不计为通过，但不会掩盖已经观察到的真实差异。
 - 报告顺序由 expected_targets 与输入 observations 保持稳定，不依赖哈希遍历顺序。
 - Markdown 文本差异使用 LCS unified diff；输入行对超过 1,000,000 时输出摘要，避免二次方表格造成内存飙升。
 

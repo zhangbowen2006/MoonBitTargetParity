@@ -625,10 +625,46 @@ fn find_observation(
 
 ///|
 fn aggregate_suite_reports(reports : Array[ParityReport]) -> SuiteReport {
+  let seen_names : Array[String] = []
+  let duplicate_names : Array[String] = []
+  for report in reports {
+    if contains_string(seen_names, report.scenario) {
+      if !contains_string(duplicate_names, report.scenario) {
+        duplicate_names.push(report.scenario)
+      }
+    } else {
+      seen_names.push(report.scenario)
+    }
+  }
+  let checked_reports : Array[ParityReport] = []
+  for report in reports {
+    if contains_string(duplicate_names, report.scenario) {
+      let diagnostics = report.diagnostics.copy()
+      diagnostics.push("duplicate scenario name in suite: " + report.scenario)
+      checked_reports.push({
+        scenario: report.scenario,
+        status: if report.status is Status::Divergent {
+          Status::Divergent
+        } else {
+          Status::Inconclusive
+        },
+        diagnostics,
+        reference_target: report.reference_target,
+        compared_targets: report.compared_targets,
+        missing_targets: report.missing_targets,
+        unexpected_targets: report.unexpected_targets,
+        duplicate_targets: report.duplicate_targets,
+        differences: report.differences,
+        suppressed_differences: report.suppressed_differences,
+      })
+    } else {
+      checked_reports.push(report)
+    }
+  }
   let mut passed = 0
   let mut divergent = 0
   let mut inconclusive = 0
-  for report in reports {
+  for report in checked_reports {
     match report.status {
       Pass => passed += 1
       Divergent => divergent += 1
@@ -637,17 +673,17 @@ fn aggregate_suite_reports(reports : Array[ParityReport]) -> SuiteReport {
   }
   let status = if divergent > 0 {
     Status::Divergent
-  } else if inconclusive > 0 || reports.length() == 0 {
+  } else if inconclusive > 0 || checked_reports.length() == 0 {
     Status::Inconclusive
   } else {
     Status::Pass
   }
   {
     status,
-    scenario_count: reports.length(),
+    scenario_count: checked_reports.length(),
     passed,
     divergent,
     inconclusive,
-    reports,
+    reports: checked_reports,
   }
 }

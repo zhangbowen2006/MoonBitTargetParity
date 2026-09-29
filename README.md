@@ -145,6 +145,7 @@ moon run examples/contract-demo
 - 第一个实际出现的 `expected_targets` 作为参考目标，目标顺序由调用者声明并写入报告。
 - 已观察到跨目标差异或预期结果回归时返回 `divergent`。没有差异但缺少、重复或多出目标，或者声明不足两个目标时返回 `inconclusive`。
 - 一个场景可报告字段 `exit_code`、`stdout`、`stderr` 差异；套件 API 可聚合多个场景。
+- 套件内重复的场景名会标为 `inconclusive` 并逐项给出诊断，避免重复数据冒充不同覆盖；若其中已有实际差异，`divergent` 仍优先。
 - `examples/portable/` 提供可扩充的 MoonBit 多后端语义探针与断言，涵盖多类 core 用法。
 
 CLI/CI 状态码：`0` 通过、`1` 已确认差异、`2` 输入错误或证据不完整。
